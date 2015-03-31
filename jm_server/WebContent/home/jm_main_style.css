@@ -1,0 +1,130 @@
+body {
+	font-family: Helvetica;
+}
+
+#container {
+	background-color: white;
+	width: 830px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#top {
+	height:50px;
+	width: 800px;
+	text-align: center;	
+	margin: 0 auto;
+}
+
+#content {
+	height:530px;
+	width: 800px;
+	margin: 0 auto;
+}
+
+#bottom {
+	height:50px;
+	width:800px;
+	text-align: center;
+	margin: 0 auto;
+}
+
+#top #jie_query {
+	width: 600px;
+}
+
+#top #search_btn {
+	
+}
+
+#content #browse {
+	height:520px;
+	width:100px;
+	float:left;
+}
+
+#content #map {
+	height:520px;
+	width:700px;
+	position:relative;
+	float:left;
+}
+
+#content #map #map_container {
+	height:500px;
+	width:700px;
+	float:left;
+}
+
+#content #map #map_controls {
+	height:50px;
+	width:25px;
+	position: absolute;
+	top: 10px;
+    left: 10px;
+}
+
+#content #map #map_controls {
+	height:50px;
+	width:25px;
+	position: absolute;
+	top: 10px;
+    left: 10px;
+}
+
+#content #map #new_jie_controls {
+	height:25px;
+	width:100px;
+	position: absolute;
+	top: 10px;
+    left: 480px;
+}
+
+#content  #map #map_data {
+	height:500px;
+	width:210px;
+	position: absolute;
+	top: 50px;
+    left: 480px;
+	overflow: hidden;
+	overflow-y: auto;	
+}
+
+#content #map #map_controls #up { 
+	background: red;
+	display: block; 
+	height: 25px; 
+	width: 25px; 
+}
+	
+#content #map #map_controls #down { 
+	background: black; 
+	display: block; 
+	height: 25px; 
+	width: 25px;
+}
+
+#content #map #new_jie_controls #show_map_data { 
+	background: gray;
+	display: block; 
+	height: 25px; 
+	width: 25px; 
+	float: left
+}
+
+#content #map #new_jie_controls #new_jie_btn { 
+	background: red;
+	display: block; 
+	height: 25px; 
+	width: 25px; 
+	float: left
+}
+
+#content #map #new_jie_controls #save_new_jies_btn { 
+	background: green;
+	display: none; 
+	height: 25px; 
+	width: 50px; 
+	float: left
+}
+

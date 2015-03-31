@@ -1,0 +1,9 @@
+*.class
+*.jar
+large_data/
+jm_server/.settings/
+jm_server/.project
+jm_server/.classpath
+jm_local/.settings/
+jm_local/.project
+jm_local/.classpath
