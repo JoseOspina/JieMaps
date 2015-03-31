@@ -6,8 +6,6 @@ function UrlObj(id, url) {
 	this.desc = "url description";
 };
 
-
-
 function NodeRaph(center,links,urls) {
 	this.center = center || null;
 	this.links = links || null;

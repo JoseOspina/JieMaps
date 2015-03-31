@@ -17,6 +17,11 @@ function Wj_Jie_Map(canvas_name,jie_data_box) {
 	this.node_color = '#9EA0AE'; // the color of the node central cricle
 	this.node_line_color = '#81BCC0'; // the color of the node border
 
+	this.jie_name_indent = this.init_scale*10;
+	this.jie_name_dist = this.init_scale*20;
+	this.title_fontsize = this.init_scale*12;
+	this.title_fontcolor = '#808080';
+	
 	// vertices style
 	this.vert_thk = 16*this.init_scale; // the thickness of the vertices among nodes
 	this.vert_color_count = 0; // a counter to plot the vertices of each new
@@ -253,6 +258,7 @@ Wj_Jie_Map.prototype.draw = function(debug_f) {
 	this.clean_paper();
 	this.draw_nodes(debug_f);
 	this.draw_jie_links();
+	this.draw_names();
 };
 
 Wj_Jie_Map.prototype.mapcoord_to_paper = function(pos_map) {
@@ -430,6 +436,35 @@ Wj_Jie_Map.prototype.draw_jie_links = function() {
 		}
 	}
 };
+
+Wj_Jie_Map.prototype.draw_names = function() {
+	
+	for(var ix_jie in this.jie_list) {
+		this.draw_jie_name(this.jie_list[ix_jie]);
+	}
+};
+
+Wj_Jie_Map.prototype.draw_jie_name = function(jie) {
+	
+	var node0_pos = this.mapcoord_to_paper(jie.nodes[0].graph.pos);
+	var title = this.paper.text(node0_pos[0],node0_pos[1],jie.title);
+	var angle_deg = 0;
+	
+	if(jie.nodes.length > 1) {
+		// Text is rotated along the first node position to be aligned towards the 
+		// second node
+		var node1_pos = this.mapcoord_to_paper(jie.nodes[1].graph.pos);
+		var node1_relpos = [ node1_pos[0] - node0_pos[0], node1_pos[1] - node0_pos[1] ];
+		angle_deg = Math.atan2(node1_relpos[1],node1_relpos[0])*180/Math.PI;
+	}
+	
+	title.transform(["r",angle_deg,"t",this.jie_name_indent,",",this.jie_name_dist]);
+	
+	title.attr({"font-size": this.title_fontsize});
+	title.attr({"fill": this.title_fontcolor});
+	title.attr({'text-anchor':'start'});
+};
+
 
 Wj_Jie_Map.prototype.draw_line = function (pos_init,pos_end,color,thk,send_to_back_f) {
     

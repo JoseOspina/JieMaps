@@ -12,3 +12,6 @@ RemoteSystemsTempFiles/
 Servers/
 jm_local/bin/
 jm_server/build/
+jm_server/WebContent/home/test.css
+jm_server/WebContent/home/test.jsp
+jm_server/WebContent/home/testscr.js
