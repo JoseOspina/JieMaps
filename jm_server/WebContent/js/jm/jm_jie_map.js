@@ -65,6 +65,10 @@ function Wj_Jie_Map(canvas_name,jie_data_box) {
 //===================================
 
 Wj_Jie_Map.prototype.init = function () {
+	this.init_paper();
+};
+
+Wj_Jie_Map.prototype.clear = function () {
 	this.jie_list = null;
 	this.new_jies_ixs = new Array();
 	this.jie_graph = new Wj_Jie_Graph(this.init_scale);
@@ -72,7 +76,7 @@ Wj_Jie_Map.prototype.init = function () {
 	
 	this.jd_empty();
 	
-	this.init_paper();
+	this.clean_paper();
 };
 
 Wj_Jie_Map.prototype.init_paper = function () {

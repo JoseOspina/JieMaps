@@ -7,3 +7,8 @@ jm_server/.classpath
 jm_local/.settings/
 jm_local/.project
 jm_local/.classpath
+.metadata/
+RemoteSystemsTempFiles/
+Servers/
+jm_local/bin/
+jm_server/build/

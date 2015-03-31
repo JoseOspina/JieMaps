@@ -41,7 +41,7 @@ function send_jie_data_to_server(new_jies_str) {
 
 function receive_jie_list(jie_list_json,jie_map) {
 	
-	jie_map.init();
+	jie_map.clear();
 	
 	var jie_list = json_to_js(jie_list_json);
 	
