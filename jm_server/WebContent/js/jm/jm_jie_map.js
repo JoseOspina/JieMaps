@@ -77,7 +77,6 @@ Wj_Jie_Map.prototype.clear = function () {
 	this.jie_list = null;
 	this.new_jies_ixs = new Array();
 	this.jie_graph = new Wj_Jie_Graph(this.init_scale);
-	this.panZoom = null;
 	
 	this.jd_empty();
 	
@@ -408,19 +407,10 @@ Wj_Jie_Map.prototype.draw_raph_url = function (pos,url_obj) {
 
 	raph_url.attr('cursor', 'pointer');
 
-    $(raph_url.bao).click(function () {
+    $(raph_url.node).click(function () {
         window.open(url_obj.url);
     });
-    
-    $(raph_url.bao).hover(function () {
-    	$(this).attr('fill',WJ_GLOBAL_jie_map.url_hover_color);
-    	$('#map_info').text(url_obj.url);
-    	
-    }, function () {
-		$(this).attr('fill',WJ_GLOBAL_jie_map.url_color);
-		$('#map_info').text('');
-	});
-    
+         
     return raph_url;
 };
 
