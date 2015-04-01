@@ -24,9 +24,9 @@ $(document).ready(function()  {
 	$("#new_jie_btn").click(function () {
 		var jie_map = WJ_GLOBAL_jie_map;
     	var jie_id = jie_map.get_new_jie_id();
-    	var node_id = jie_map.get_new_node_id();
+    	var bao_id = jie_map.get_new_bao_id();
     	
-    	var new_jie = new JieObj(jie_id,null,null,null,node_id);
+    	var new_jie = new JieObj(jie_id,null,null,null,bao_id);
     	
     	var new_jie_ix = jie_map.add_jie(new_jie,0,1);
     	

@@ -6,55 +6,55 @@ function UrlObj(id, url) {
 	this.desc = "url description";
 };
 
-function NodeRaph(center,links,urls) {
+function BaoRaph(center,links,urls) {
 	this.center = center || null;
 	this.links = links || null;
 	this.urls = urls || null;
 };
 
-function NodeGraph(pos, move_f) {
+function BaoGraph(pos, move_f) {
 	this.pos = pos || [0,0];
 	this.move_f = move_f || 1;
 };
 
-function NodeObj(id, title, desc, urls, url_id) {
+function BaoObj(id, title, desc, urls, url_id) {
 	// Standard elements
 	this.id = id || -1;
-	this.title = title || 'node name'
+	this.title = title || 'bao name'
 	this.urls = urls || new Array(new UrlObj(url_id));
-	this.desc = desc || "node description";
+	this.desc = desc || "bao description";
 
 	// Graph elements
 	var pos = pos || [0,0];
 	var move_f = move_f || 1;
 	
-	this.graph = new NodeGraph(pos,move_f);
+	this.graph = new BaoGraph(pos,move_f);
 	
 	// Raphael elements
-	this.raph = new NodeRaph();
+	this.raph = new BaoRaph();
 };
 
-function JieObj(id, title, desc, nodes, node_id) {
+function JieObj(id, title, desc, baos, bao_id) {
 	// Standard elements
-	node_id = node_id || -1;	
+	bao_id = bao_id || -1;	
 	this.id = id || -1;
 	this.title = title || 'jie name';
-	this.nodes = nodes || new Array(new NodeObj(node_id));
+	this.baos = baos || new Array(new BaoObj(bao_id));
 	this.desc = desc || "jie description with #thetag and #othertag";
 	
 	// Raphael elements
 	this.raph = null;
 };
 
-function JieObjBasic(id, title, desc, nodes) {
+function JieObjBasic(id, title, desc, baos) {
 	// Standard elements
 	this.id = id || -1;
 	this.title = title || '';
 	this.desc =  desc || '';
-	this.nodes = nodes || new Array(new NodeObjBasic());
+	this.baos = baos || new Array(new BaoObjBasic());
 };
 
-function NodeObjBasic(id, title, desc, urls) {
+function BaoObjBasic(id, title, desc, urls) {
 	// Standard elements
 	this.id =  id || -1;
 	this.title =  title || '';
@@ -65,5 +65,5 @@ function NodeObjBasic(id, title, desc, urls) {
 function UrlObjBasic(id, url) {
 	// Standard elements
 	this.id =  id || -1;
-	this.url =  url || 'http://www.webjies.com';
+	this.url =  url || 'http://www.jiemaps.com';
 };

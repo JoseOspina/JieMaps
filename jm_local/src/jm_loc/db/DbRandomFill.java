@@ -24,7 +24,7 @@ public class DbRandomFill extends DbHandle {
 		
 		int n_urls = 100;
 		int n_tags = 20;
-		int n_nodes = 50;
+		int n_baos = 50;
 		int n_jies = 100;
 				
 		this.drop_and_create_all_tables();
@@ -32,7 +32,7 @@ public class DbRandomFill extends DbHandle {
 		this.create_urls_from_file(n_urls,url_file);
 		this.create_tags_from_file(n_tags,tag_file);
 		
-		this.create_random_nodes(n_nodes);
+		this.create_random_baos(n_baos);
 		this.create_random_jies(n_jies);
 		this.assign_random_tags_to_jies();
 
@@ -99,22 +99,22 @@ public class DbRandomFill extends DbHandle {
         return url_str; 
    }
 
-	private void create_random_nodes(int n_nodes) throws SQLException {
+	private void create_random_baos(int n_baos) throws SQLException {
 		int n_urls_min = 1;
 		int n_urls_max = 6;
 				
-		String node_title;
-		String node_desc;
+		String bao_title;
+		String bao_desc;
 		int n_urls;
 		
 		List<Integer> all_url_ids = this.get_all_ele_ids("urls");
 		
-		for(int ix_node = 1; ix_node <= n_nodes; ix_node++) {
+		for(int ix_bao = 1; ix_bao <= n_baos; ix_bao++) {
 			
-			node_title = "Node " + Integer.toString(ix_node);
-			node_desc = "Description of Node " + Integer.toString(ix_node);
+			bao_title = "Bao " + Integer.toString(ix_bao);
+			bao_desc = "Description of Bao " + Integer.toString(ix_bao);
 			
-			int node_id = this.add_node(node_title,node_desc);
+			int bao_id = this.add_bao(bao_title,bao_desc);
 			
 			List<Integer> url_ixs_to_add = new ArrayList<Integer>();
 			n_urls = random_engine.nextInt(n_urls_max - n_urls_min + 1) + n_urls_min;
@@ -129,21 +129,21 @@ public class DbRandomFill extends DbHandle {
 			
 			for(Integer url_ix : url_ixs_to_add) { 
 				int url_id = all_url_ids.get(url_ix);
-				this.add_url_to_node(node_id,url_id);
+				this.add_url_to_bao(bao_id,url_id);
 			}
 		}
 	}
 	
 	private void create_random_jies(int n_jies) throws SQLException {
-		int n_nodes_min = 1;
-		int n_nodes_max = 6;
+		int n_baos_min = 1;
+		int n_baos_max = 6;
 				
 		String jie_title;
 		String jie_desc;
 		
-		int n_nodes;
+		int n_baos;
 		
-		List<Integer> all_node_ids = this.get_all_ele_ids("nodes");
+		List<Integer> all_bao_ids = this.get_all_ele_ids("baos");
 		
 		for(int ix_jie = 1; ix_jie <= n_jies; ix_jie++) {
 			
@@ -152,21 +152,21 @@ public class DbRandomFill extends DbHandle {
 			
 			int jie_id = this.add_jie(jie_title,jie_desc);
 			
-			List<Integer> nodes_ixs_to_add = new ArrayList<Integer>();
-			n_nodes = random_engine.nextInt(n_nodes_max - n_nodes_min + 1) + n_nodes_min;
+			List<Integer> baos_ixs_to_add = new ArrayList<Integer>();
+			n_baos = random_engine.nextInt(n_baos_max - n_baos_min + 1) + n_baos_min;
 			
-			for(int ix_node = 1; ix_node <= n_nodes; ix_node++) { 
-				Integer node_id_ix = this.random_engine.nextInt(all_node_ids.size());
-				while(nodes_ixs_to_add.contains(node_id_ix)) {
-					// prevent duplicated nodes in a jie
-					node_id_ix = this.random_engine.nextInt(all_node_ids.size());	
+			for(int ix_bao = 1; ix_bao <= n_baos; ix_bao++) { 
+				Integer bao_id_ix = this.random_engine.nextInt(all_bao_ids.size());
+				while(baos_ixs_to_add.contains(bao_id_ix)) {
+					// prevent duplicated baos in a jie
+					bao_id_ix = this.random_engine.nextInt(all_bao_ids.size());	
 				};
-				nodes_ixs_to_add.add(node_id_ix);
+				baos_ixs_to_add.add(bao_id_ix);
 			}
 			
-			for(Integer node_id_ix : nodes_ixs_to_add) { 
-				int node_id = all_node_ids.get(node_id_ix);
-				this.add_node_to_jie(jie_id,node_id);
+			for(Integer bao_id_ix : baos_ixs_to_add) { 
+				int bao_id = all_bao_ids.get(bao_id_ix);
+				this.add_bao_to_jie(jie_id,bao_id);
 			}
 		}
 	}

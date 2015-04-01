@@ -5,15 +5,15 @@ import java.util.*;
 public class JieDataBasic
 {
 	private Integer id;
-	private List<NodeDataBasic> nodes;
+	private List<BaoDataBasic> baos;
 	private String title;
 	private String desc;
 	
-	public JieDataBasic(String title, String desc, List<NodeDataBasic> nodes, int id) {
+	public JieDataBasic(String title, String desc, List<BaoDataBasic> baos, int id) {
 		this.id = id;
 		this.title = title;
 		this.desc = desc;
-		this.nodes = nodes;
+		this.baos = baos;
 	}
 		
 	public Integer getId() {
@@ -24,24 +24,24 @@ public class JieDataBasic
 		this.id = idIn;
 	}
 	
-	public List<NodeDataBasic> getNodes() {
-		return nodes;
+	public List<BaoDataBasic> getBaos() {
+		return baos;
 	}
 	
-	public void setNodes(ArrayList<NodeDataBasic> nodesIn) {
-		this.nodes = nodesIn;
+	public void setBaos(ArrayList<BaoDataBasic> baosIn) {
+		this.baos = baosIn;
 	}
 	
-	public NodeDataBasic getOneNode(Integer i) {
-		return nodes.get(i);
+	public BaoDataBasic getOneBao(Integer i) {
+		return baos.get(i);
 	}
 	
-	public void setOneNode(NodeDataBasic nodeIn,Integer i) {
-		this.nodes.add(i,nodeIn);	
+	public void setOneBao(BaoDataBasic baoIn,Integer i) {
+		this.baos.add(i,baoIn);	
 	}
 
-	public void appendOneNode(NodeDataBasic nodeIn) {
-		nodes.add(nodeIn);	
+	public void appendOneBao(BaoDataBasic baoIn) {
+		baos.add(baoIn);	
 	}
 	
 	public String getTitle() {
@@ -52,10 +52,10 @@ public class JieDataBasic
 		this.title = titleIn;
 	}
 
-	public NodeDataBasic getUrlNode(UrlDataBasic url) {
-		for(NodeDataBasic node : this.nodes) {
-			if(node.getUrls().contains(url)) {
-				return node; 
+	public BaoDataBasic getUrlBao(UrlDataBasic url) {
+		for(BaoDataBasic bao : this.baos) {
+			if(bao.getUrls().contains(url)) {
+				return bao; 
 			}
 		}
 		return null;

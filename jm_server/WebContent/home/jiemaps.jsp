@@ -23,9 +23,8 @@
   	<body oncontextmenu="return false;">
   		<div id="container">
   			<div id="top">
-  				<form action = "get_jies.jsp">
-					<input type="text" 			id="jie_query"
-												value="abaft">
+  				<form action = "javascript:get_jie_from_keyw()">
+					<input type="text" 			id="jie_query">
 		                      					
 				   	<input type="button" 		id="search_btn"
 				   								value="Search"

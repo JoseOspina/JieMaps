@@ -2,14 +2,14 @@ package jm_loc.beans;
 
 import java.util.*;
 
-public class NodeDataBasic
+public class BaoDataBasic
 {
 	private Integer id;
 	private List<UrlDataBasic>	urls;
 	private String title;
 	private String desc;
 	
-	public NodeDataBasic(String title, String desc, List<UrlDataBasic>	url_list, int id)
+	public BaoDataBasic(String title, String desc, List<UrlDataBasic>	url_list, int id)
 	{
 		this.id = id;
 		this.title = title;

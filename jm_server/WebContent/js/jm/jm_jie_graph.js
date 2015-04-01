@@ -3,8 +3,8 @@
  */
 function Wj_Jie_Graph(init_scale) {
 
-	this.nodes = new Array(); // array of nodes objects
-	this.islands = null; // array of arrays of interconnected nodes
+	this.baos = new Array(); // array of baos objects
+	this.islands = null; // array of arrays of interconnected baos
 	this.links_jies = new Matrix(0, 0, 0); // matrix of links due to jies
 	this.links_urls = null; // matrix of links due to shared urls
 
@@ -12,50 +12,50 @@ function Wj_Jie_Graph(init_scale) {
 	this.dft_dir = 0; // default direction for place init
 	this.init_circle_vs_n_islands_x = [ 1,  4,  8,  16, 32, 64  ]; // init circle position vs n islands LUT X
 	this.init_circle_vs_n_islands_y = [ 30, 30, 50, 60, 80, 100 ];; // init circle position vs n islands LUT Y
-	this.dft_node_dist = 40*init_scale; // defaulte node distance for place init
+	this.dft_bao_dist = 40*init_scale; // defaulte bao distance for place init
 
-	this.rel_dists_x = null; // matrix storing the relative distance X component between all nodes 
-	this.rel_dists_y = null; // matrix storing the relative distance Y component between all nodes
-	this.rel_dists_mod = null; // matrix storing the modulus of relative distances between all nodes
+	this.rel_dists_x = null; // matrix storing the relative distance X component between all baos 
+	this.rel_dists_y = null; // matrix storing the relative distance Y component between all baos
+	this.rel_dists_mod = null; // matrix storing the modulus of relative distances between all baos
 	
-	this.rep_forces_x = null; // matrix storing the repulsive forces X component between all nodes
-	this.rep_forces_y = null; // matrix storing the repulsive forces Y component between all nodes
-	this.att_forces_x = null; // matrix storing the attractive forces X component between all nodes 
-	this.att_forces_y = null; // matrix storing the attractive forces Y component between all nodes
-	this.tor_forces_x = null; // vector storing the torsional forces X component of each node
-	this.tor_forces_y = null; // vector storing the torsional forces Y component of each node
+	this.rep_forces_x = null; // matrix storing the repulsive forces X component between all baos
+	this.rep_forces_y = null; // matrix storing the repulsive forces Y component between all baos
+	this.att_forces_x = null; // matrix storing the attractive forces X component between all baos 
+	this.att_forces_y = null; // matrix storing the attractive forces Y component between all baos
+	this.tor_forces_x = null; // vector storing the torsional forces X component of each bao
+	this.tor_forces_y = null; // vector storing the torsional forces Y component of each bao
 	
-	this.total_forces_x = null; // vector storing the total summed forces X component of each node
-	this.total_forces_y = null; // vector storing the total summed forces X component of each node
+	this.total_forces_x = null; // vector storing the total summed forces X component of each bao
+	this.total_forces_y = null; // vector storing the total summed forces X component of each bao
 
 	this.epsilon_dist = 1;
-	this.dist_scale = 20*init_scale; // nodes should have mean distance around this value
-	this.node_mass = 1;
+	this.dist_scale = 20*init_scale; // baos should have mean distance around this value
+	this.bao_mass = 1;
 	this.n_steps = 100;
 };
 
-Wj_Jie_Graph.prototype.set_nodes = function(nodes) {
-	// set nodes without verifying no repeating nodes are present
-	this.nodes = new Array();
+Wj_Jie_Graph.prototype.set_baos = function(baos) {
+	// set baos without verifying no repeating baos are present
+	this.baos = new Array();
 	
-	for (var node_ix in nodes) {
-		this.nodes.push(nodes[node_ix]);
+	for (var bao_ix in baos) {
+		this.baos.push(baos[bao_ix]);
 	}
 };
 
-Wj_Jie_Graph.prototype.add_node = function(node,link_to) {
+Wj_Jie_Graph.prototype.add_bao = function(bao,link_to) {
 
-	// Check if the node is already present in the graph
-	var this_ix_in_list = this.nodes.indexOf(node);
+	// Check if the bao is already present in the graph
+	var this_ix_in_list = this.baos.indexOf(bao);
 	
 	var ix_added;
 	
 	if (this_ix_in_list == -1) {
 		// add it if not present
-		this.nodes.push(node);
+		this.baos.push(bao);
 		this.links_jies.add_empty_row_and_col();
 		
-		ix_added = this.nodes.length - 1
+		ix_added = this.baos.length - 1
 	} else {
 		ix_added = this_ix_in_list;
 	}
@@ -63,56 +63,56 @@ Wj_Jie_Graph.prototype.add_node = function(node,link_to) {
 	// update the jie links using the link_to parameter
 	if(link_to) {
 		for(var it_link_to = 0; it_link_to < link_to.length; it_link_to++) {
-			var this_link_to_ix = this.nodes.indexOf(link_to[it_link_to]);
+			var this_link_to_ix = this.baos.indexOf(link_to[it_link_to]);
 			this.links_jies.set_value_sym(ix_added, this_link_to_ix,1);
 		}
 	}	
 
-	// return the index of the node just added
+	// return the index of the bao just added
 	return ix_added;
 	
 };
 
-Wj_Jie_Graph.prototype.add_nodes_and_links_from_jie = function(jie) {
+Wj_Jie_Graph.prototype.add_baos_and_links_from_jie = function(jie) {
 
-	// go through the nodes and add each one of them together with 
+	// go through the baos and add each one of them together with 
 	// the links associated with the jie
-	for (node_ix in jie.nodes) {
+	for (bao_ix in jie.baos) {
 
-		var this_node = jie.nodes[node_ix];
+		var this_bao = jie.baos[bao_ix];
 		var link_to = new Array();
 
-		if (node_ix > 0) {
-			// starting from the second node, every node in a jie 
-			// has a link with the previous node.
-			var prev_node = jie.nodes[node_ix - 1];
-			link_to.push(prev_node);
+		if (bao_ix > 0) {
+			// starting from the second bao, every bao in a jie 
+			// has a link with the previous bao.
+			var prev_bao = jie.baos[bao_ix - 1];
+			link_to.push(prev_bao);
 		}
 		
-		this.add_node(this_node,link_to);
+		this.add_bao(this_bao,link_to);
 	}
 };
 
-Wj_Jie_Graph.prototype.update_nodes_and_links_from_jie_list = function(jie_list) {
+Wj_Jie_Graph.prototype.update_baos_and_links_from_jie_list = function(jie_list) {
 
 	this.empty();
 	
 	for (jie_ix in jie_list) {
-		this.add_nodes_and_links_from_jie(jie_list[jie_ix]);
+		this.add_baos_and_links_from_jie(jie_list[jie_ix]);
 	}
 };
 
 Wj_Jie_Graph.prototype.empty = function() {
 
-	this.nodes = new Array();
+	this.baos = new Array();
 	this.links_jies = new Matrix(0, 0, 0); // matrix of links due to jies
 	 
 };
 
 Wj_Jie_Graph.prototype.froze = function() {
-	// set nodes move_f property to 0
-	for (var node_ix in this.nodes) {
-		this.nodes[node_ix].graph.move_f = 0;
+	// set baos move_f property to 0
+	for (var bao_ix in this.baos) {
+		this.baos[bao_ix].graph.move_f = 0;
 	}
 };
 
@@ -125,29 +125,29 @@ Wj_Jie_Graph.prototype.place_init = function() {
 
 };
 
-Wj_Jie_Graph.prototype.get_n_nodes= function() {
-	return this.nodes.length;	
+Wj_Jie_Graph.prototype.get_n_baos= function() {
+	return this.baos.length;	
 }
 
-Wj_Jie_Graph.prototype.get_links = function(node_ix) {
+Wj_Jie_Graph.prototype.get_links = function(bao_ix) {
 
-	var linked_nodes_ixs = new Array();
+	var linked_baos_ixs = new Array();
 
-	var this_row = this.links_jies.get_row(node_ix);
+	var this_row = this.links_jies.get_row(bao_ix);
 
 	for (var ix_col = 0; ix_col < this_row.length; ix_col++) {
 		if (this_row[ix_col] == 1) {
-			linked_nodes_ixs.push(ix_col);
+			linked_baos_ixs.push(ix_col);
 		}
 	}
 
-	return linked_nodes_ixs;
+	return linked_baos_ixs;
 };
 
 Wj_Jie_Graph.prototype.layout_force = function() {
 	
 	// layout simulation, computes the forces and 
-	// moves the nodes
+	// moves the baos
 	
 	for(var ix_step = 1; ix_step < this.n_steps; ix_step++) {
 		
@@ -168,14 +168,14 @@ Wj_Jie_Graph.prototype.layout_force = function() {
 
 Wj_Jie_Graph.prototype.zero_forces = function() {
 	
-	var n_nodes = this.get_n_nodes();
+	var n_baos = this.get_n_baos();
 	
-	this.rep_forces_x = new Matrix(n_nodes,n_nodes,0);
-	this.rep_forces_y = new Matrix(n_nodes,n_nodes,0);
-	this.att_forces_x = new Matrix(n_nodes,n_nodes,0); 
-	this.att_forces_y = new Matrix(n_nodes,n_nodes,0);
-	this.tor_forces_x = new Matrix(n_nodes,n_nodes,0);
-	this.tor_forces_y = new Matrix(n_nodes,n_nodes,0);
+	this.rep_forces_x = new Matrix(n_baos,n_baos,0);
+	this.rep_forces_y = new Matrix(n_baos,n_baos,0);
+	this.att_forces_x = new Matrix(n_baos,n_baos,0); 
+	this.att_forces_y = new Matrix(n_baos,n_baos,0);
+	this.tor_forces_x = new Matrix(n_baos,n_baos,0);
+	this.tor_forces_y = new Matrix(n_baos,n_baos,0);
 	
 };
 
@@ -197,14 +197,14 @@ Wj_Jie_Graph.prototype.place_island = function(island, pos, dir) {
 
 	this.cursor.pos = pos;
 
-	for (ix_node = 0; ix_node < island.length; ix_node++) {
-		var this_node_ix = island[ix_node];
+	for (ix_bao = 0; ix_bao < island.length; ix_bao++) {
+		var this_bao_ix = island[ix_bao];
 
-		this.nodes[this_node_ix].graph.pos[0] = this.cursor.pos[0];
-		this.nodes[this_node_ix].graph.pos[1] = this.cursor.pos[1];
+		this.baos[this_bao_ix].graph.pos[0] = this.cursor.pos[0];
+		this.baos[this_bao_ix].graph.pos[1] = this.cursor.pos[1];
 
 		var dir_random = Math.PI/180*wj_random(-1,1)*0;
-		this.cursor.move(this.dft_node_dist, dir+dir_random);
+		this.cursor.move(this.dft_bao_dist, dir+dir_random);
 	}
 };
 
@@ -212,61 +212,61 @@ Wj_Jie_Graph.prototype.update_islands = function() {
 
 	this.islands = new Array();
 
-	var nodes_tocheck_ixs = wj_create_incremental_array(0,
-			this.nodes.length - 1);
+	var baos_tocheck_ixs = wj_create_incremental_array(0,
+			this.baos.length - 1);
 
-	nodes_tocheck_ixs.reverse();
+	baos_tocheck_ixs.reverse();
 
-	while (nodes_tocheck_ixs.length > 0) {
+	while (baos_tocheck_ixs.length > 0) {
 
-		start_node_ix = nodes_tocheck_ixs.pop();
+		start_bao_ix = baos_tocheck_ixs.pop();
 
-		this_island_ixs = this.get_island(start_node_ix);
+		this_island_ixs = this.get_island(start_bao_ix);
 		this.islands.push(this_island_ixs);
 
-		wj_remove_elements(nodes_tocheck_ixs, this_island_ixs);
+		wj_remove_elements(baos_tocheck_ixs, this_island_ixs);
 	}
 };
 
-Wj_Jie_Graph.prototype.get_island = function(start_node_ix) {
+Wj_Jie_Graph.prototype.get_island = function(start_bao_ix) {
 
-	var island_nodes = new Array();
-	var nodes_to_add = new Array();
+	var island_baos = new Array();
+	var baos_to_add = new Array();
 
-	nodes_to_add.push(start_node_ix);
+	baos_to_add.push(start_bao_ix);
 
-	while (nodes_to_add.length > 0) {
+	while (baos_to_add.length > 0) {
 
-		this_node_ix = nodes_to_add.pop();
-		island_nodes.push(this_node_ix);
-		nodes_linked_ixs = this.get_links(this_node_ix);
+		this_bao_ix = baos_to_add.pop();
+		island_baos.push(this_bao_ix);
+		baos_linked_ixs = this.get_links(this_bao_ix);
 
-		for (ix_node_linked_ix in nodes_linked_ixs) {
-			ix_node_linked = nodes_linked_ixs[ix_node_linked_ix];
-			if ((island_nodes.indexOf(ix_node_linked) == -1)
-					&& (nodes_to_add.indexOf(ix_node_linked) == -1)) {
-				nodes_to_add.push(ix_node_linked);
+		for (ix_bao_linked_ix in baos_linked_ixs) {
+			ix_bao_linked = baos_linked_ixs[ix_bao_linked_ix];
+			if ((island_baos.indexOf(ix_bao_linked) == -1)
+					&& (baos_to_add.indexOf(ix_bao_linked) == -1)) {
+				baos_to_add.push(ix_bao_linked);
 			}
 		}
 	}
 
-	return island_nodes;
+	return island_baos;
 };
 
 Wj_Jie_Graph.prototype.update_distances = function() {
 	// compute the distance matrices storing
 	// the relative distance components and modulus
-	// for all node combinations to prevent their
+	// for all bao combinations to prevent their
 	// computation at multiple places
 	
-	var n_nodes = this.get_n_nodes();
+	var n_baos = this.get_n_baos();
 	
-	this.rel_dists_x = new Matrix(n_nodes,n_nodes,0);
-	this.rel_dists_y = new Matrix(n_nodes,n_nodes,0);
-	this.rel_dists_mod = new Matrix(n_nodes,n_nodes,0);
+	this.rel_dists_x = new Matrix(n_baos,n_baos,0);
+	this.rel_dists_y = new Matrix(n_baos,n_baos,0);
+	this.rel_dists_mod = new Matrix(n_baos,n_baos,0);
 	
-	for(var ix_1 = 0; ix_1 < n_nodes; ix_1++) {
-		for(var ix_2 = ix_1+1; ix_2 < n_nodes; ix_2++) {
+	for(var ix_1 = 0; ix_1 < n_baos; ix_1++) {
+		for(var ix_2 = ix_1+1; ix_2 < n_baos; ix_2++) {
 			
 			rel_dist = this.get_rel_dist(ix_1,ix_2);
 			rel_dist_mod = this.get_modulus(rel_dist);
@@ -280,17 +280,17 @@ Wj_Jie_Graph.prototype.update_distances = function() {
 }
 
 Wj_Jie_Graph.prototype.combine_all_forces = function() {
-	var n_nodes = this.get_n_nodes();
+	var n_baos = this.get_n_baos();
 	
-	this.total_forces_x = this.zeros(n_nodes);
-	this.total_forces_y = this.zeros(n_nodes);
+	this.total_forces_x = this.zeros(n_baos);
+	this.total_forces_y = this.zeros(n_baos);
 	
-	for(var ix_1 = 0; ix_1 < n_nodes; ix_1++) {
+	for(var ix_1 = 0; ix_1 < n_baos; ix_1++) {
 		
 		var total_force_x = 0;
 		var total_force_y = 0;
 		
-		for(var ix_2 = 0; ix_2 < n_nodes; ix_2++) {
+		for(var ix_2 = 0; ix_2 < n_baos; ix_2++) {
 				
 			total_force_x += this.rep_forces_x.get_value(ix_1,ix_2) +
 							 this.att_forces_x.get_value(ix_1,ix_2) +
@@ -308,25 +308,25 @@ Wj_Jie_Graph.prototype.combine_all_forces = function() {
 };
 
 Wj_Jie_Graph.prototype.move = function() {
-	var n_nodes = this.get_n_nodes();
+	var n_baos = this.get_n_baos();
 	
-	for(var ix_1 = 0; ix_1 < n_nodes; ix_1++) {
-		if(this.nodes[ix_1].graph.move_f == 1) {
-			this.nodes[ix_1].graph.pos[0] += this.total_forces_x[ix_1]/this.node_mass;
-			this.nodes[ix_1].graph.pos[1] += this.total_forces_y[ix_1]/this.node_mass;
+	for(var ix_1 = 0; ix_1 < n_baos; ix_1++) {
+		if(this.baos[ix_1].graph.move_f == 1) {
+			this.baos[ix_1].graph.pos[0] += this.total_forces_x[ix_1]/this.bao_mass;
+			this.baos[ix_1].graph.pos[1] += this.total_forces_y[ix_1]/this.bao_mass;
 		} 
 	}			
 };
 
 Wj_Jie_Graph.prototype.update_all_rep_forces = function() {
-	// loop over all nodes possible combinations and
+	// loop over all baos possible combinations and
 	// if linked, computes the repulsive force and
 	// adds the result to the repulsive forces matrix
 	
-	var n_nodes = this.get_n_nodes();
+	var n_baos = this.get_n_baos();
 	
-	for(var ix_1 = 0; ix_1 < n_nodes; ix_1++) {
-		for(var ix_2 = ix_1+1; ix_2 < n_nodes; ix_2++) {
+	for(var ix_1 = 0; ix_1 < n_baos; ix_1++) {
+		for(var ix_2 = ix_1+1; ix_2 < n_baos; ix_2++) {
 			
 			this_force = this.get_rep_force(ix_1,ix_2);
 			
@@ -338,7 +338,7 @@ Wj_Jie_Graph.prototype.update_all_rep_forces = function() {
 };
 
 Wj_Jie_Graph.prototype.get_rep_force = function(ix_1,ix_2) {
-	// computes the repulsive force between two nodes
+	// computes the repulsive force between two baos
 	
 	var rel_dist_x = this.rel_dists_x.get_value(ix_1,ix_2);
 	var rel_dist_y = this.rel_dists_y.get_value(ix_1,ix_2);
@@ -390,22 +390,22 @@ Wj_Jie_Graph.prototype.normalize = function(vec) {
 Wj_Jie_Graph.prototype.get_rel_dist = function(ix_1,ix_2) {
 	
 	var rel_dist = new Array(2);
-	rel_dist[0] = this.nodes[ix_1].graph.pos[0] - this.nodes[ix_2].graph.pos[0];
-	rel_dist[1] = this.nodes[ix_1].graph.pos[1] - this.nodes[ix_2].graph.pos[1];
+	rel_dist[0] = this.baos[ix_1].graph.pos[0] - this.baos[ix_2].graph.pos[0];
+	rel_dist[1] = this.baos[ix_1].graph.pos[1] - this.baos[ix_2].graph.pos[1];
 	
 	return rel_dist;
 };
 
 Wj_Jie_Graph.prototype.update_all_att_forces = function() {
 	
-	// loop over all nodes possible combinations and
+	// loop over all baos possible combinations and
 	// if linked, computes the attraction force and
 	// adds the result to the attraction forces matrix  
 	
-	var n_nodes = this.get_n_nodes();
+	var n_baos = this.get_n_baos();
 	
-	for(var ix_1 = 0; ix_1 < n_nodes; ix_1++) {
-		for(var ix_2 = ix_1+1; ix_2 < n_nodes; ix_2++) {
+	for(var ix_1 = 0; ix_1 < n_baos; ix_1++) {
+		for(var ix_2 = ix_1+1; ix_2 < n_baos; ix_2++) {
 			if(this.links_jies.get_value(ix_1,ix_2) == 1) {
 				
 				this_force = this.get_att_force(ix_1,ix_2);
@@ -418,7 +418,7 @@ Wj_Jie_Graph.prototype.update_all_att_forces = function() {
 }
 
 Wj_Jie_Graph.prototype.get_att_force = function(ix_1,ix_2) {
-	// computes the attractive force between two nodes
+	// computes the attractive force between two baos
 	
 	var rel_dist_x = this.rel_dists_x.get_value(ix_1,ix_2);
 	var rel_dist_y = this.rel_dists_y.get_value(ix_1,ix_2);
@@ -475,34 +475,34 @@ Wj_Jie_Graph.prototype.get_rep_force_mod = function(rel_dist_mod) {
 };
 
 Wj_Jie_Graph.prototype.update_all_tor_forces = function() {
-	// loop over all nodes possible combinations and
+	// loop over all baos possible combinations and
 	// if linked, computes the torsional force and
 	// adds the result to the torsional forces matrix
 	
-	var n_nodes = this.get_n_nodes();
+	var n_baos = this.get_n_baos();
 	
-	// loop on all the nodes
-	for(var ix_c = 0; ix_c < n_nodes; ix_c++) {
-		// if a node is linked to at least two other nodes, 
+	// loop on all the baos
+	for(var ix_c = 0; ix_c < n_baos; ix_c++) {
+		// if a bao is linked to at least two other baos, 
 		// it exerts a torsional force on them
 		
-		var linked_nodes = this.get_links(ix_c);
+		var linked_baos = this.get_links(ix_c);
 
-		if(linked_nodes.length > 1) {
+		if(linked_baos.length > 1) {
 			
-			// loop on all the linked nodes
-			for(var ix_L1 = 0; ix_L1 < linked_nodes.length; ix_L1++) {
-				for(var ix_L2 = ix_L1+1; ix_L2 < linked_nodes.length; ix_L2++) {
+			// loop on all the linked baos
+			for(var ix_L1 = 0; ix_L1 < linked_baos.length; ix_L1++) {
+				for(var ix_L2 = ix_L1+1; ix_L2 < linked_baos.length; ix_L2++) {
 					
-					this_forces = this.get_tor_forces(ix_c,linked_nodes[ix_L1],linked_nodes[ix_L2]);
+					this_forces = this.get_tor_forces(ix_c,linked_baos[ix_L1],linked_baos[ix_L2]);
 					
-					// torsional force applied to node ix_1 
-					this.tor_forces_x.sum_value(linked_nodes[ix_L1],linked_nodes[ix_L2],this_forces[0][0]);
-					this.tor_forces_y.sum_value(linked_nodes[ix_L1],linked_nodes[ix_L2],this_forces[0][1]);
+					// torsional force applied to bao ix_1 
+					this.tor_forces_x.sum_value(linked_baos[ix_L1],linked_baos[ix_L2],this_forces[0][0]);
+					this.tor_forces_y.sum_value(linked_baos[ix_L1],linked_baos[ix_L2],this_forces[0][1]);
 
-					// torsional force applied to node ix_2
-					this.tor_forces_x.sum_value(linked_nodes[ix_L2],linked_nodes[ix_L1],this_forces[1][0]);
-					this.tor_forces_y.sum_value(linked_nodes[ix_L2],linked_nodes[ix_L1],this_forces[1][1]);
+					// torsional force applied to bao ix_2
+					this.tor_forces_x.sum_value(linked_baos[ix_L2],linked_baos[ix_L1],this_forces[1][0]);
+					this.tor_forces_y.sum_value(linked_baos[ix_L2],linked_baos[ix_L1],this_forces[1][1]);
 				}
 			}
 		}
@@ -510,7 +510,7 @@ Wj_Jie_Graph.prototype.update_all_tor_forces = function() {
 };
 
 Wj_Jie_Graph.prototype.get_tor_forces = function(ix_c,ix_L1,ix_L2) {
-	// computes the torsional force between two nodes
+	// computes the torsional force between two baos
 	
 	var k_t 	= 1.5;
 	

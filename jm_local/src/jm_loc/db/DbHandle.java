@@ -44,16 +44,16 @@ public class DbHandle {
 			st.executeUpdate();
 		}
 		
-		tables = dbm.getTables(null, null, "urls_in_nodes", null);
+		tables = dbm.getTables(null, null, "urls_in_baos", null);
 		if(tables.next()) {
-			st_str = "DROP TABLE urls_in_nodes";
+			st_str = "DROP TABLE urls_in_baos";
 			st = this.con.prepareStatement(st_str);
 			st.executeUpdate();
 		}
 	 	
-		tables = dbm.getTables(null, null, "nodes_in_jies", null);
+		tables = dbm.getTables(null, null, "baos_in_jies", null);
 		if(tables.next()) {
-			st_str = "DROP TABLE nodes_in_jies";
+			st_str = "DROP TABLE baos_in_jies";
 			st = this.con.prepareStatement(st_str);
 			st.executeUpdate();
 		}
@@ -65,9 +65,9 @@ public class DbHandle {
 			st.executeUpdate();
 		}
 		
-		tables = dbm.getTables(null, null, "nodes", null);
+		tables = dbm.getTables(null, null, "baos", null);
 		if(tables.next()) {
-			st_str = "DROP TABLE nodes";
+			st_str = "DROP TABLE baos";
 			st = this.con.prepareStatement(st_str);
 			st.executeUpdate();
 		}
@@ -96,7 +96,7 @@ public class DbHandle {
 		st = this.con.prepareStatement(st_str);
 		st.executeUpdate();		
 		
-		st_str = "CREATE TABLE nodes ("
+		st_str = "CREATE TABLE baos ("
 				+ "id MEDIUMINT NOT NULL AUTO_INCREMENT, "
 				+ "title VARCHAR(528), "
 				+ "descr VARCHAR(2500), "
@@ -126,25 +126,25 @@ public class DbHandle {
 		st = this.con.prepareStatement(st_str);
 		st.executeUpdate();	
 		
-		st_str = "CREATE TABLE urls_in_nodes ("
+		st_str = "CREATE TABLE urls_in_baos ("
 				+ "id MEDIUMINT NOT NULL AUTO_INCREMENT, "
-				+ "node_id MEDIUMINT, "
+				+ "bao_id MEDIUMINT, "
 				+ "url_id MEDIUMINT, "
 				+ "PRIMARY KEY (id), "
-				+ "CONSTRAINT fk_urls_in_node_node_id FOREIGN KEY (node_id) REFERENCES nodes(id), "
-				+ "CONSTRAINT fk_urls_in_node_url_id FOREIGN KEY (url_id) REFERENCES urls(id)) "
+				+ "CONSTRAINT fk_urls_in_bao_bao_id FOREIGN KEY (bao_id) REFERENCES baos(id), "
+				+ "CONSTRAINT fk_urls_in_bao_url_id FOREIGN KEY (url_id) REFERENCES urls(id)) "
 				+ "ENGINE=InnoDB";
 		
 		st = this.con.prepareStatement(st_str);
 		st.executeUpdate();	
 		
-		st_str = "CREATE TABLE nodes_in_jies ("
+		st_str = "CREATE TABLE baos_in_jies ("
 				+ "id MEDIUMINT NOT NULL AUTO_INCREMENT, "
 				+ "jie_id MEDIUMINT, "
-				+ "node_id MEDIUMINT, "
+				+ "bao_id MEDIUMINT, "
 				+ "PRIMARY KEY (id), "
-				+ "CONSTRAINT fk_nodes_in_jie_jie_id FOREIGN KEY (jie_id) REFERENCES jies(id), "
-				+ "CONSTRAINT fk_nodes_in_jie_node_id FOREIGN KEY (node_id) REFERENCES nodes(id)) "
+				+ "CONSTRAINT fk_baos_in_jie_jie_id FOREIGN KEY (jie_id) REFERENCES jies(id), "
+				+ "CONSTRAINT fk_baos_in_jie_bao_id FOREIGN KEY (bao_id) REFERENCES baos(id)) "
 				+ "ENGINE=InnoDB";
 		
 		st = this.con.prepareStatement(st_str);
@@ -182,12 +182,12 @@ public class DbHandle {
 		return gk.getInt(1);
 	}
 	
-	public int add_node(String title, String desc) throws SQLException {
+	public int add_bao(String title, String desc) throws SQLException {
 		PreparedStatement 	st 	= null;
 		ResultSet gk = null;
 		String st_str;
 		
-		st_str = "INSERT INTO nodes (title,descr) VALUES (?,?)";
+		st_str = "INSERT INTO baos (title,descr) VALUES (?,?)";
 		st = this.con.prepareStatement(st_str,Statement.RETURN_GENERATED_KEYS);
 		
 		st.setString(1, title);
@@ -238,15 +238,15 @@ public class DbHandle {
 		return curr_id;
 	}
 	
-	public int add_url_to_node(int node_id, int url_id) throws SQLException {
+	public int add_url_to_bao(int bao_id, int url_id) throws SQLException {
 		PreparedStatement 	st 	= null;
 		ResultSet gk = null;
 		String st_str;
 		
-		st_str = "INSERT INTO urls_in_nodes (node_id,url_id) VALUES (?,?)";
+		st_str = "INSERT INTO urls_in_baos (bao_id,url_id) VALUES (?,?)";
 		st = this.con.prepareStatement(st_str,Statement.RETURN_GENERATED_KEYS);
 		
-		st.setInt(1, node_id);
+		st.setInt(1, bao_id);
 		st.setInt(2, url_id);
 		st.executeUpdate();
 		gk = st.getGeneratedKeys();
@@ -255,16 +255,16 @@ public class DbHandle {
 		return gk.getInt(1);
 	}
 	
-	public int add_node_to_jie(int jie_id, int node_id) throws SQLException {
+	public int add_bao_to_jie(int jie_id, int bao_id) throws SQLException {
 		PreparedStatement 	st 	= null;
 		ResultSet gk = null;
 		String st_str;
 		
-		st_str = "INSERT INTO nodes_in_jies (jie_id,node_id) VALUES (?,?)";
+		st_str = "INSERT INTO baos_in_jies (jie_id,bao_id) VALUES (?,?)";
 		st = this.con.prepareStatement(st_str,Statement.RETURN_GENERATED_KEYS);
 		
 		st.setInt(1, jie_id);
-		st.setInt(2, node_id);
+		st.setInt(2, bao_id);
 		st.executeUpdate();
 		gk = st.getGeneratedKeys();
 		gk.next();
@@ -299,17 +299,17 @@ public int add_url_obj(UrlDataBasic url) throws SQLException, MalformedURLExcept
 		return url_id;
 	}
 	
-	public int add_node_obj(NodeDataBasic node, boolean add_tags) throws SQLException, MalformedURLException {
+	public int add_bao_obj(BaoDataBasic bao, boolean add_tags) throws SQLException, MalformedURLException {
 		
-		// Add the node and get the id
-		int node_id = this.add_node(node.getTitle(),node.getDesc());
+		// Add the bao and get the id
+		int bao_id = this.add_bao(bao.getTitle(),bao.getDesc());
 		
-		for(UrlDataBasic url : node.getUrls()){
+		for(UrlDataBasic url : bao.getUrls()){
 			int url_id = this.add_url_obj(url);
-			this.add_url_to_node(node_id,url_id);
+			this.add_url_to_bao(bao_id,url_id);
 		};
 		
-		return node_id;
+		return bao_id;
 	}
 	
 	public void add_jie_obj(JieDataBasic jie, boolean add_tags) throws SQLException, MalformedURLException {
@@ -323,9 +323,9 @@ public int add_url_obj(UrlDataBasic url) throws SQLException, MalformedURLExcept
 			this.add_tags_to_jie(jie_id, tags_ids);
 		}
 		
-		for(NodeDataBasic node : jie.getNodes()){
-			int node_id = this.add_node_obj(node, add_tags);
-			this.add_node_to_jie(jie_id,node_id);
+		for(BaoDataBasic bao : jie.getBaos()){
+			int bao_id = this.add_bao_obj(bao, add_tags);
+			this.add_bao_to_jie(jie_id,bao_id);
 		};
 	
 	}
@@ -390,23 +390,23 @@ public int add_url_obj(UrlDataBasic url) throws SQLException, MalformedURLExcept
 		return url_found;
 	}
 	
-	public NodeDataBasic get_node_from_db(int id) throws SQLException {
+	public BaoDataBasic get_bao_from_db(int id) throws SQLException {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		String st_str;
 		
-		st_str = "SELECT title, descr FROM nodes WHERE id = (?)";
+		st_str = "SELECT title, descr FROM baos WHERE id = (?)";
 		st = this.con.prepareStatement(st_str);
 		st.setInt(1, id);
 		rs = st.executeQuery();
 		
-		List<UrlDataBasic> url_list = this.get_urls_of_node(id);
+		List<UrlDataBasic> url_list = this.get_urls_of_bao(id);
 		
 		rs.next();
 		
-		NodeDataBasic node = new NodeDataBasic(rs.getString("title"),rs.getString("descr"),url_list,id);
+		BaoDataBasic bao = new BaoDataBasic(rs.getString("title"),rs.getString("descr"),url_list,id);
 		
-		return node;
+		return bao;
 	}
 		
 	public JieDataBasic get_jie_from_db(int id) throws SQLException {
@@ -421,20 +421,20 @@ public int add_url_obj(UrlDataBasic url) throws SQLException, MalformedURLExcept
 		
 		rs.next();
 		
-		List<NodeDataBasic> node_list = this.get_nodes_of_jie(id);
+		List<BaoDataBasic> bao_list = this.get_baos_of_jie(id);
 		
-		JieDataBasic jie = new JieDataBasic(rs.getString("title"),rs.getString("descr"),node_list,id);
+		JieDataBasic jie = new JieDataBasic(rs.getString("title"),rs.getString("descr"),bao_list,id);
 		
 		return jie;
 	}	
 	
-	public List<UrlDataBasic> get_urls_of_node(int id) throws SQLException {
+	public List<UrlDataBasic> get_urls_of_bao(int id) throws SQLException {
 		PreparedStatement 	st 	= null;
 		ResultSet rs = null;
 		String st_str;
 		List<UrlDataBasic> url_list = new ArrayList<UrlDataBasic>();
 		
-		st_str = "SELECT (url_id) FROM urls_in_nodes WHERE node_id = (?)";
+		st_str = "SELECT (url_id) FROM urls_in_baos WHERE bao_id = (?)";
 		st = this.con.prepareStatement(st_str);
 		st.setInt(1, id);
 		rs = st.executeQuery();
@@ -447,23 +447,23 @@ public int add_url_obj(UrlDataBasic url) throws SQLException, MalformedURLExcept
 		return url_list;
 	}
 	
-	public List<NodeDataBasic> get_nodes_of_jie(int id) throws SQLException {
+	public List<BaoDataBasic> get_baos_of_jie(int id) throws SQLException {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		String st_str;
-		List<NodeDataBasic> node_list = new ArrayList<NodeDataBasic>();
+		List<BaoDataBasic> bao_list = new ArrayList<BaoDataBasic>();
 		
-		st_str = "SELECT (node_id) FROM nodes_in_jies WHERE jie_id = (?)";
+		st_str = "SELECT (bao_id) FROM baos_in_jies WHERE jie_id = (?)";
 		st = this.con.prepareStatement(st_str);
 		st.setInt(1, id);
 		rs = st.executeQuery();
 		
 		while(rs.next()) {
-			NodeDataBasic node = this.get_node_from_db(rs.getInt("node_id"));
-			node_list.add(node); 
+			BaoDataBasic bao = this.get_bao_from_db(rs.getInt("bao_id"));
+			bao_list.add(bao); 
 		}
 		
-		return node_list;
+		return bao_list;
 	}
 	
 	public List<JieDataBasic> get_jies_with_tag(String tag) throws SQLException {
