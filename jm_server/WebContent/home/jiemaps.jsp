@@ -25,6 +25,7 @@
   		</div>
   		
   		<div id="top">
+  			<img id="logo" src="img/Logo.png">
 			<input type="text" id="jie_query">
 		   	<input type="button" id="search_btn" value="Search" onclick = "get_jie_from_keyw();" >
 		</div>
