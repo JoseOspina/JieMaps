@@ -14,34 +14,26 @@ function Wj_Jie_Map(canvas_name,jie_data_box) {
 	// bao style
 	this.bao_radius = 10*this.init_scale; // the radius of the central circle of a bao
 	this.bao_line_thk = 0*this.init_scale; // the thickness of the border of the bao
-	this.bao_color = '#9EA0AE'; // the color of the bao central cricle
-	this.bao_line_color = '#81BCC0'; // the color of the bao border
+	this.bao_color = '#E7E7E7'; // the color of the bao central cricle
+	this.bao_line_color = '#E7E7E7'; // the color of the bao border
 
 	this.jie_name_indent = this.init_scale*10;
 	this.jie_name_dist = this.init_scale*20;
 	this.title_fontsize = this.init_scale*12;
-	this.title_fontcolor = '#808080';
 	
 	// vertices style
 	this.vert_thk = 16*this.init_scale; // the thickness of the vertices among baos
-	this.vert_color_count = 0; // a counter to plot the vertices of each new
-	this.vert_color_list = [ '#003366', '#006699', '#0066CC', '#0099FF','#3366FF','#3333CC','#0000CC','#99CCFF','#9966FF','#333399' ];
-
+	this.vert_color_count = 0; // a counter to plot the vertices of each new jie
+	this.vert_color_list = null;
 	// urls style
 	this.url_ang0 = wj_deg2rad(-15); // the inital rotation of the branches
 	this.url_radius = 6*this.init_scale; // url radius
 	this.url_dist = 12*this.init_scale; // url distance to bao center
-	this.url_color = '#66CCFF'; // the standard color of a the bubble
-	this.url_hover_color = '#6699FF'; // the standard color of a the bubble
-	this.url_line_color = '#6A9BCC'; // the standard color of a border of the
+	this.url_color = "#C5D7E0"; // the standard color of a the bubble
+	this.url_hover_color = '#C5D7E0'; // the standard color of a the bubble
+	this.url_line_color = '#B1CBD9'; // the standard color of a border of the
 	this.url_link_thk = 6; // the distance from the center of the bao to the
-	this.url_link_color = '#9EA0AE'; // the color of the branch that connects the
-
-	// titles style
-	this.title_color_list = [ '#6E6E6E', '#424242', '#585858', '#2E2E2E' ]; // the
-	this.title_font_famility = "Helvetica";
-	this.title_font_size = 12;
-	this.title_opacity = 1;
+	this.url_link_color = '#B1CBD9'; // the color of the branch that connects the
 
 	// Jie Map components
 	this.jie_list = null; // store a complete jie list with all the jies currently in the map
@@ -402,6 +394,7 @@ Wj_Jie_Map.prototype.draw_raph_url = function (pos,url_obj) {
 	var raph_url = this.paper.circle(pos[0], pos[1], this.url_radius);
 
 	raph_url.attr('fill', this.url_color);
+	
 	raph_url.attr('stroke', this.url_line_color);
 	raph_url.attr('stroke-width', this.url_line_thk);
 
@@ -415,6 +408,8 @@ Wj_Jie_Map.prototype.draw_raph_url = function (pos,url_obj) {
 };
 
 Wj_Jie_Map.prototype.draw_jie_links = function() {
+	
+	this.vert_color_list = Please.make_color({colors_returned:this.jie_list.length})
 	
 	for(var ix_jie in this.jie_list) {
 		var this_jie = this.jie_list[ix_jie];
@@ -430,11 +425,11 @@ Wj_Jie_Map.prototype.draw_jie_links = function() {
 Wj_Jie_Map.prototype.draw_names = function() {
 	
 	for(var ix_jie in this.jie_list) {
-		this.draw_jie_name(this.jie_list[ix_jie]);
+		this.draw_jie_name(this.jie_list[ix_jie],this.vert_color_list[ix_jie]);
 	}
 };
 
-Wj_Jie_Map.prototype.draw_jie_name = function(jie) {
+Wj_Jie_Map.prototype.draw_jie_name = function(jie,color) {
 	
 	var bao0_pos = this.mapcoord_to_paper(jie.baos[0].graph.pos);
 	var title = this.paper.text(bao0_pos[0],bao0_pos[1],jie.title);
@@ -451,7 +446,7 @@ Wj_Jie_Map.prototype.draw_jie_name = function(jie) {
 	title.transform(["r",angle_deg,"t",this.jie_name_indent,",",this.jie_name_dist]);
 	
 	title.attr({"font-size": this.title_fontsize});
-	title.attr({"fill": this.title_fontcolor});
+	title.attr({"fill": color});
 	title.attr({'text-anchor':'start'});
 };
 

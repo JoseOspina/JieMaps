@@ -7,6 +7,7 @@
   		<script type="text/javascript" src="../js/ext/jquery-1.8.3.js"></script>
   		<script type="text/javascript" src="../js/ext/raphael-min.js"></script>
   		<script type="text/javascript" src="../js/ext/raphael.pan-zoom.js"></script>
+  		<script type="text/javascript" src="../js/ext/Please-compressed.js"></script>
   		<script type="text/javascript" src="../js/jm/jm_generic.js"></script>
   		<script type="text/javascript" src="../js/jm/jm_obj.js"></script>
   		<script type="text/javascript" src="../js/jm/jm_matrix.js"></script>
