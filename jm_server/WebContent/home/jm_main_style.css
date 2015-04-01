@@ -2,113 +2,75 @@ body {
 	font-family: Helvetica;
 }
 
-#container {
-	background-color: white;
-	width: 830px;
-	margin-left: auto;
-	margin-right: auto;
+#map_container {
+	height:100%;
+	width:100%;
+	position:fixed;
+	top: 0px;
+	left: 0px;
 }
 
 #top {
-	height:50px;
-	width: 800px;
-	text-align: center;	
-	margin: 0 auto;
+	position:fixed;
+	top: 10px;
+	left: 10px;
+	width: 100%;	
 }
-
-#content {
-	height:530px;
-	width: 800px;
-	margin: 0 auto;
-}
-
-#bottom {
-	height:50px;
-	width:800px;
-	text-align: center;
-	margin: 0 auto;
-}
-
+	
 #top #jie_query {
-	width: 600px;
+	float: left;
+	width: 200px;
 }
 
 #top #search_btn {
-	
+	float: left;
+    width: 80px;
 }
 
-#content #browse {
-	height:520px;
-	width:100px;
-	float:left;
+#bottom {
+	position:fixed;
+	width:100%;
+	text-align: center;
+	bottom: 0px;
 }
 
-#content #map {
-	height:520px;
-	width:700px;
-	position:relative;
-	float:left;
-}
-
-#content #map #map_container {
-	height:500px;
-	width:700px;
-	float:left;
-}
-
-#content #map #map_controls {
-	height:50px;
-	width:25px;
-	position: absolute;
-	top: 10px;
-    left: 10px;
-}
-
-#content #map #map_controls {
-	height:50px;
-	width:25px;
-	position: absolute;
-	top: 10px;
-    left: 10px;
-}
-
-#content #map #new_jie_controls {
+#map_controls {
+	width:50px;
 	height:25px;
-	width:100px;
-	position: absolute;
-	top: 10px;
-    left: 480px;
+	position: fixed;
+	top: 40px;
+	left: 10px;
 }
 
-#content  #map #map_data {
-	height:500px;
-	width:210px;
-	position: absolute;
-	top: 50px;
-    left: 480px;
-	overflow: hidden;
-	overflow-y: auto;	
-}
-
-#content #map #map_controls #up { 
+#map_controls #up { 
 	background-image: url(icons/arrow-oblique-expand.svg);
     background-repeat: no-repeat;
     background-size: 24px 24px;
+    float: left;
 	display: block; 
 	height: 25px; 
 	width: 25px; 
 }
 	
-#content #map #map_controls #down { 
+#map_controls #down { 
 	background-image: url(icons/arrow-oblique-contract.svg);
     background-repeat: no-repeat;
     background-size: 24px 24px;
+    float: left;
 	display: block; 
 	height: 25px; 
 	width: 25px;
 }
 
-#content #map #new_jie_controls #show_map_data { 
+#new_jie_controls {
+	height:25px;
+	width:75px;
+	position: fixed;
+	top: 40px;
+    right: 10px;
+}
+
+#new_jie_controls #show_map_data { 
 	background-image: url(icons/list-circle.svg);
     background-repeat: no-repeat;
     background-size: 24px 24px;
@@ -118,7 +80,7 @@ body {
 	float: left
 }
 
-#content #map #new_jie_controls #new_jie_btn { 
+#new_jie_controls #new_jie_btn { 
 	background-image: url(icons/plus.svg);
     background-repeat: no-repeat;
     background-size: 24px 24px;
@@ -128,7 +90,7 @@ body {
 	float: left
 }
 
-#content #map #new_jie_controls #save_new_jies_btn { 
+#new_jie_controls #save_new_jies_btn { 
 	background-image: url(icons/check.svg);
     background-repeat: no-repeat;
     background-size: 24px 24px;
@@ -136,5 +98,16 @@ body {
 	height: 25px; 
 	width: 25px; 
 	float: left
+}
+
+#map_data {
+	height:70%;
+	width:200px;
+	position: fixed;
+	display:none;
+	top: 100px;
+    right: 0px;
+	overflow: hidden;
+	overflow-y: auto;	
 }
 

@@ -21,38 +21,30 @@
   		
   	</head>
   	<body oncontextmenu="return false;">
-  		<div id="container">
-  			<div id="top">
-  				<form action = "javascript:get_jie_from_keyw()">
-					<input type="text" 			id="jie_query">
-		                      					
-				   	<input type="button" 		id="search_btn"
-				   								value="Search"
-		                             			onclick = "get_jie_from_keyw();" >
-				</form>
-  			</div>
-  			<div id="content">	
-  				<div id="browse">
-			    </div>
-			    <div id="map">
-		    		<div id="map_container">
-	   				</div>
-	   				<div id="map_controls">
-	   					<a id="up" href="javascript:;"></a>
-			   			<a id="down" href="javascript:;"></a>
-					</div>
-					<div id="new_jie_controls">
-	   					<a id="show_map_data" href="javascript:;"></a>
-	   					<a id="new_jie_btn" href="javascript:;"></a>
-	   					<a id="save_new_jies_btn" href="javascript:;"></a>
-					</div>
-					<div id="map_data">
-	   				</div>
-		    	</div>
-  			</div>
-  			<div id="bottom">
-  				JieMaps
-  			</div>
+  		<div id="map_container">
+  		</div>
+  		
+  		<div id="top">
+			<input type="text" id="jie_query">
+		   	<input type="button" id="search_btn" value="Search" onclick = "get_jie_from_keyw();" >
+		</div>
+		
+		<div id="map_controls">
+			<a id="down" href="javascript:;"></a>
+   			<a id="up" href="javascript:;"></a>
+		</div>
+		
+		<div id="new_jie_controls">
+ 			<a id="show_map_data" href="javascript:;"></a>
+ 			<a id="new_jie_btn" href="javascript:;"></a>
+ 			<a id="save_new_jies_btn" href="javascript:;"></a>
+		</div>
+		
+		<div id="map_data">
+ 		</div>
+		
+		<div id="bottom">
+			JieMaps
 		</div>
 	</body>
 </html>
