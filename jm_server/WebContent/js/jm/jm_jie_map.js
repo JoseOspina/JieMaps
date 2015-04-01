@@ -528,7 +528,7 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
 		if(edit_f == '0') {
 			$('#jdbx_jie_head_content_p'+this_el_id).replaceWith("<textarea class = jdbx_jie_head_content_e " +
 					"id = jdbx_jie_head_content_e" + this_el_id + ">" + $("#jdbx_jie_head_content_p" + this_el_id).text() + "</textarea>");
-			$('#jdbx_jie_head_edit'+this_el_id).css('background','green');
+			$('#jdbx_jie_head_edit'+this_el_id).css('background-image','url(icons/check.svg)');
 			$('#jdbx_jie_head_content'+this_el_id).attr('data_edit_f','1')
 		} else {
 			var this_jie_ix = $("#jie_data_box" + this_el_id).attr('data_jie_ix')
@@ -540,7 +540,7 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
 			// update paragraph with the jie title
             $('#jdbx_jie_head_content_e'+this_el_id).replaceWith("<p class = jdbx_jie_head_content_p " +
                     "id = jdbx_jie_head_content_p" + this_el_id + ">" + new_title + "</p>");
-            $('#jdbx_jie_head_edit'+this_el_id).css('background','gray');
+            $('#jdbx_jie_head_edit'+this_el_id).css('background-image','url(icons/brush.svg)');
             $('#jdbx_jie_head_content'+this_el_id).attr('data_edit_f','0')
 		}
 			
@@ -563,7 +563,7 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
 		if(edit_f == '0') {
 			$('#jdbx_jie_desc_p'+this_el_id).replaceWith("<textarea class = jdbx_jie_desc_e " +
 					"id = jdbx_jie_desc_e" + this_el_id + ">" + $("#jdbx_jie_desc_p" + this_el_id).text() + "</textarea>");
-			$('#jdbx_jie_desc_edit'+this_el_id).css('background','green');
+			$('#jdbx_jie_desc_edit'+this_el_id).css('background-image','url(icons/check.svg)');
 			$('#jdbx_jie_desc'+this_el_id).attr('data_edit_f','1')
 		} else {
 			var this_jie_ix = $("#jie_data_box" + this_el_id).attr('data_jie_ix')
@@ -575,7 +575,7 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
 			// update paragraph with the bao desc
             $('#jdbx_jie_desc_e'+this_el_id).replaceWith("<p class = jdbx_jie_desc_p " +
 					"id = jdbx_jie_desc_p" + this_el_id + ">" + new_desc + "</p>");
-            $('#jdbx_jie_desc_edit'+this_el_id).css('background','gray');
+            $('#jdbx_jie_desc_edit'+this_el_id).css('background-image','url(icons/brush.svg)');
             $('#jdbx_jie_desc'+this_el_id).attr('data_edit_f','0')
 		}
 			
@@ -677,7 +677,7 @@ Wj_Jie_Map.prototype.jd_append_bao = function(jie_ix,bao_ix,expanded) {
 		if(edit_f == '0') {
 			$('#jdbx_bao_head_content_p'+this_el_id).replaceWith("<textarea class = jdbx_bao_head_content_e " +
 					"id = jdbx_bao_head_content_e" + this_el_id + ">" + $("#jdbx_bao_head_content_p" + this_el_id).text() + "</textarea>");
-			$('#jdbx_bao_head_edit'+this_el_id).css('background','green');
+			$('#jdbx_bao_head_edit'+this_el_id).css('background-image','url(icons/check.svg)');
 			$('#jdbx_bao_head_content'+this_el_id).attr('data_edit_f','1');
 		} else {
 			var this_jie_ix = $("#jdbx_bao_data_box" + this_el_id).attr('data_jie_ix');
@@ -690,7 +690,7 @@ Wj_Jie_Map.prototype.jd_append_bao = function(jie_ix,bao_ix,expanded) {
 			// update paragraph with the jie title
             $('#jdbx_bao_head_content_e'+this_el_id).replaceWith("<p class = jdbx_bao_head_content_p " +
                     "id = jdbx_bao_head_content_p" + this_el_id + ">" + new_title + "</p>");
-            $('#jdbx_bao_head_edit'+this_el_id).css('background','gray');
+            $('#jdbx_bao_head_edit'+this_el_id).css('background-image','url(icons/brush.svg)');
             $('#jdbx_bao_head_content'+this_el_id).attr('data_edit_f','0')
 		}
 			
@@ -714,7 +714,7 @@ Wj_Jie_Map.prototype.jd_append_bao = function(jie_ix,bao_ix,expanded) {
 		if(edit_f == '0') {
 			$('#jdbx_bao_desc_p'+this_el_id).replaceWith("<textarea class = jdbx_bao_desc_e " +
 					"id = jdbx_bao_desc_e" + this_el_id + ">" + $("#jdbx_bao_desc_p" + this_el_id).text() + "</textarea>");
-			$('#jdbx_bao_desc_edit'+this_el_id).css('background','green');
+			$('#jdbx_bao_desc_edit'+this_el_id).css('background-image','url(icons/check.svg)');
 			$('#jdbx_bao_desc'+this_el_id).attr('data_edit_f','1')
 		} else {
 			var this_jie_ix = $("#jdbx_bao_data_box" + this_el_id).attr('data_jie_ix');
@@ -727,7 +727,7 @@ Wj_Jie_Map.prototype.jd_append_bao = function(jie_ix,bao_ix,expanded) {
 			// update paragraph with the bao desc
             $('#jdbx_bao_desc_e'+this_el_id).replaceWith("<p class = jdbx_bao_desc_p " +
 					"id = jdbx_bao_desc_p" + this_el_id + ">" + new_desc + "</p>");
-            $('#jdbx_bao_desc_edit'+this_el_id).css('background','gray');
+            $('#jdbx_bao_desc_edit'+this_el_id).css('background-image','url(icons/brush.svg)');
             $('#jdbx_bao_desc'+this_el_id).attr('data_edit_f','0')
 		}
 			
@@ -831,7 +831,7 @@ Wj_Jie_Map.prototype.jd_append_url = function(jie_ix,bao_ix,url_ix,expanded) {
 		if(edit_f == '0') {
 			$('#jdbx_url_head_content_href'+this_el_id).replaceWith("<textarea class = jdbx_url_head_content_e " +
 					"id = jdbx_url_head_content_e" + this_el_id + ">" + $("#jdbx_url_head_content_href" + this_el_id).attr('href') + "</textarea>");
-			$('#jdbx_url_head_edit'+this_el_id).css('background','green');
+			$('#jdbx_url_head_edit'+this_el_id).css('background-image','url(icons/check.svg)');
 			$('#jdbx_url_head_content'+this_el_id).attr('data_edit_f','1');
 		} else {
 			var this_jie_ix = $("#jdbx_url_data_box" + this_el_id).attr('data_jie_ix');
@@ -847,7 +847,7 @@ Wj_Jie_Map.prototype.jd_append_url = function(jie_ix,bao_ix,url_ix,expanded) {
 			// update paragraph with the url
             $('#jdbx_url_head_content_e'+this_el_id).replaceWith($("<a href = " + new_href + " target='_blank' " + 
         			" class = jdbx_url_head_content_href " + "id=jdbx_url_head_content_href" + this_el_id + ">" + url.title + "</a>"));
-            $('#jdbx_url_head_edit'+this_el_id).css('background','gray');
+            $('#jdbx_url_head_edit'+this_el_id).css('background-image','url(icons/brush.svg)');
             $('#jdbx_url_head_content'+this_el_id).attr('data_edit_f','0')
 		}
 			
@@ -872,7 +872,7 @@ Wj_Jie_Map.prototype.jd_append_url = function(jie_ix,bao_ix,url_ix,expanded) {
 		if(edit_f == '0') {
 			$('#jdbx_url_desc_p'+this_el_id).replaceWith("<textarea class = jdbx_url_desc_e " +
 					"id = jdbx_url_desc_e" + this_el_id + ">" + $("#jdbx_url_desc_p" + this_el_id).text() + "</textarea>");
-			$('#jdbx_url_desc_edit'+this_el_id).css('background','green');
+			$('#jdbx_url_desc_edit'+this_el_id).css('background-image','url(icons/check.svg)');
 			$('#jdbx_url_desc'+this_el_id).attr('data_edit_f','1')
 		} else {
 			var this_jie_ix = $("#jdbx_url_data_box" + this_el_id).attr('data_jie_ix');
@@ -887,7 +887,7 @@ Wj_Jie_Map.prototype.jd_append_url = function(jie_ix,bao_ix,url_ix,expanded) {
 			// update paragraph with the url desc
             $('#jdbx_url_desc_e'+this_el_id).replaceWith("<p class = jdbx_url_desc_p " +
 					"id = jdbx_url_desc_p" + this_el_id + ">" + new_desc + "</p>");
-            $('#jdbx_url_desc_edit'+this_el_id).css('background','gray');
+            $('#jdbx_url_desc_edit'+this_el_id).css('background-image','url(icons/brush.svg)');
             $('#jdbx_url_desc'+this_el_id).attr('data_edit_f','0')
 		}
 			

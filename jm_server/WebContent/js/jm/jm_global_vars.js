@@ -35,7 +35,7 @@ $(document).ready(function()  {
     	jie_map.layout_force();
     	jie_map.draw();
     	
-    	$("#save_new_jies_btn").toggle('true');
+    	$("#save_new_jies_btn").show();
     });
 	
 	$("#save_new_jies_btn").click(function (e) {

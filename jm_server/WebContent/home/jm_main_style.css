@@ -91,21 +91,27 @@ body {
 }
 
 #content #map #map_controls #up { 
-	background: red;
+	background-image: url(icons/arrow-oblique-expand.svg);
+    background-repeat: no-repeat;
+    background-size: 24px 24px;
 	display: block; 
 	height: 25px; 
 	width: 25px; 
 }
 	
 #content #map #map_controls #down { 
-	background: black; 
+	background-image: url(icons/arrow-oblique-contract.svg);
+    background-repeat: no-repeat;
+    background-size: 24px 24px;
 	display: block; 
 	height: 25px; 
 	width: 25px;
 }
 
 #content #map #new_jie_controls #show_map_data { 
-	background: gray;
+	background-image: url(icons/list-circle.svg);
+    background-repeat: no-repeat;
+    background-size: 24px 24px;
 	display: block; 
 	height: 25px; 
 	width: 25px; 
@@ -113,7 +119,9 @@ body {
 }
 
 #content #map #new_jie_controls #new_jie_btn { 
-	background: red;
+	background-image: url(icons/plus.svg);
+    background-repeat: no-repeat;
+    background-size: 24px 24px;
 	display: block; 
 	height: 25px; 
 	width: 25px; 
@@ -121,10 +129,12 @@ body {
 }
 
 #content #map #new_jie_controls #save_new_jies_btn { 
-	background: green;
+	background-image: url(icons/check.svg);
+    background-repeat: no-repeat;
+    background-size: 24px 24px;
 	display: none; 
 	height: 25px; 
-	width: 50px; 
+	width: 25px; 
 	float: left
 }
 

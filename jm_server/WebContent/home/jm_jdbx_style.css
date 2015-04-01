@@ -12,14 +12,12 @@
 	width:200px;
 	float:left;
 	clear:both;
-	border-color: green;
 }
 
 .jdbx_url_data_box {
 	width:200px;
 	float:left;
 	clear:both;
-	border-color: blue;
 }
 
 .jdbx_jie_head {
@@ -58,21 +56,25 @@
 }
 
 .jdbx_jie_desc_edit {
+	background-image: url(icons/brush.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
 	margin-top: 4px;
     margin-left: 0px;
     margin-bottom: 4px;
-	background: gray;
 	width:10px;
 	height:10px;
 	float:left;
 }
 
 .jdbx_jie_head_ctr {
+	background-image: url(icons/arrow-right.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
 	margin-top: 4px;
     margin-left: 2px;
     margin-right: 2px;
     margin-bottom: 4px;
-	background: red;
 	width:10px;
 	height:10px;
 	float:left;
@@ -100,10 +102,12 @@
 }
 
 .jdbx_jie_head_edit {
+	background-image: url(icons/brush.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
 	margin-top: 4px;
     margin-left: 0px;
     margin-bottom: 4px;
-	background: gray;
 	width:10px;
 	height:10px;
 	float:left;
@@ -145,21 +149,25 @@
 }
 
 .jdbx_bao_desc_edit {
+	background-image: url(icons/brush.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
 	margin-top: 4px;
     margin-left: 0px;
     margin-bottom: 4px;
-	background: gray;
 	width:10px;
 	height:10px;
 	float:left;
 }
 
 .jdbx_bao_head_ctr {
+	background-image: url(icons/arrow-right.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
 	margin-top: 4px;
     margin-left: 5px;
     margin-right: 2px;
     margin-bottom: 4px;
-	background: green;
 	width:10px;
 	height:10px;
 	float:left;
@@ -187,10 +195,12 @@
 }
 
 .jdbx_bao_head_edit {
+	background-image: url(icons/brush.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
 	margin-top: 4px;
     margin-left: 0px;
     margin-bottom: 4px;
-	background: gray;
 	width:10px;
 	height:10px;
 	float:left;
@@ -201,13 +211,11 @@
 	width:167px;
 	float:left;	
 	cursor:pointer;
-	background: green;
 	margin-left: 5px;
 	margin-bottom: 2px;
 }
 
 .jdbx_new_bao_box_text_content_p {
-	color:white;
 	margin-top: 1px;
     margin-bottom: 0px;
     margin-left: 3px;
@@ -250,21 +258,25 @@
 }
 
 .jdbx_url_desc_edit {
+	background-image: url(icons/brush.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
 	margin-top: 4px;
     margin-left: 0px;
     margin-bottom: 4px;
-	background: gray;
 	width:10px;
 	height:10px;
 	float:left;
 }
 
 .jdbx_url_head_ctr {
+	background-image: url(icons/arrow-right.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
 	margin-top: 4px;
     margin-left: 8px;
     margin-right: 2px;
     margin-bottom: 4px;
-	background: blue;
 	width:10px;
 	height:10px;
 	float:left;
@@ -292,10 +304,12 @@
 }
 
 .jdbx_url_head_edit {
+	background-image: url(icons/brush.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
 	margin-top: 4px;
     margin-left: 0px;
     margin-bottom: 4px;
-	background: gray;
 	width:10px;
 	height:10px;
 	float:left;
@@ -305,14 +319,12 @@
 	height:15px;
 	width:167px;
 	cursor:pointer;
-	background: blue;
 	float:left;	
 	margin-left: 8px;
 	margin-bottom: 2px;
 }
 
 .jdbx_new_url_box_text_content_p {
-	color:white;
 	margin-top: 1px;
     margin-bottom: 0px;
     margin-left: 3px;
