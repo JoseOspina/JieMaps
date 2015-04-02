@@ -15,6 +15,7 @@ function BaoRaph(center,links,urls) {
 function BaoGraph(pos, move_f) {
 	this.pos = pos || [0,0];
 	this.move_f = move_f || 1;
+	this.injies = null;
 };
 
 function BaoObj(id, title, desc, urls, url_id) {

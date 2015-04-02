@@ -12,7 +12,7 @@ function Wj_Jie_Graph(init_scale) {
 	this.dft_dir = 0; // default direction for place init
 	this.init_circle_vs_n_islands_x = [ 1,  4,  8,  16, 32, 64  ]; // init circle position vs n islands LUT X
 	this.init_circle_vs_n_islands_y = [ 30, 30, 50, 60, 80, 100 ];; // init circle position vs n islands LUT Y
-	this.dft_bao_dist = 40*init_scale; // defaulte bao distance for place init
+	this.dft_bao_dist = 40*init_scale; // default bao distance for place init
 
 	this.rel_dists_x = null; // matrix storing the relative distance X component between all baos 
 	this.rel_dists_y = null; // matrix storing the relative distance Y component between all baos
@@ -90,6 +90,26 @@ Wj_Jie_Graph.prototype.add_baos_and_links_from_jie = function(jie) {
 		}
 		
 		this.add_bao(this_bao,link_to);
+	}
+};
+
+Wj_Jie_Graph.prototype.update_injies = function(jie_list) {
+	// search all baos currently in the graph on the jies of a jielist 
+	// and return a list with the indexes of the jies in the list in which 
+	// each bao appears
+	
+	for (bao_ix in this.baos) {
+		
+		this_bao = this.baos[bao_ix];
+		this_bao.graph.injies = new Array();
+		
+		for (jie_ix in jie_list) { 
+			this_bao_pos = jie_list[jie_ix].baos.indexOf(this_bao);
+			if(this_bao_pos != -1) {
+				// this bao is present in this jie
+				this_bao.graph.injies.push(jie_ix);
+			}
+		}
 	}
 };
 

@@ -24,7 +24,8 @@ function Wj_Jie_Map(canvas_name,jie_data_box) {
 	// vertices style
 	this.vert_thk = 16*this.init_scale; // the thickness of the vertices among baos
 	this.vert_color_count = 0; // a counter to plot the vertices of each new jie
-	this.vert_color_list = null;
+	this.vert_color_list = this.vert_color_list = Please.make_color({colors_returned:50,seed:"111",full_random:false});
+	
 	// urls style
 	this.url_ang0 = wj_deg2rad(-15); // the inital rotation of the branches
 	this.url_radius = 6*this.init_scale; // url radius
@@ -275,11 +276,23 @@ Wj_Jie_Map.prototype.paper_to_mapcoord = function(pos_paper) {
 Wj_Jie_Map.prototype.draw_baos = function(debug_f) {
 	
 	this.update_baricenter();
+	this.jie_graph.update_injies(this.jie_list);
 	
 	for(var ix_bao in this.jie_graph.baos) {
-		var this_bao = this.jie_graph.baos[ix_bao];
 		
-		this.draw_bao(this_bao,debug_f);
+		var this_bao = this.jie_graph.baos[ix_bao];
+		var injies = this_bao.graph.injies;
+		
+		this_colors = new Array();
+		
+		for(ix_injie in injies) {
+			this_colors.push(this.vert_color_list[injies[ix_injie]]);
+		}
+				
+		var this_color = this.mix_colors(this_colors);
+		
+		
+		this.draw_bao(this_bao,this_color,debug_f);
 	}
 };
 
@@ -298,13 +311,17 @@ Wj_Jie_Map.prototype.update_baricenter = function() {
 	
 };
 
-Wj_Jie_Map.prototype.draw_bao = function(this_bao,debug_f) {
+Wj_Jie_Map.prototype.draw_bao = function(this_bao,color,debug_f) {
 	
 	debug_f = debug_f || 0;
 	
 	var bao_center_map_pos = this.mapcoord_to_paper(this_bao.graph.pos);
 	
-	var raph_center = this.draw_raph_bao(bao_center_map_pos);
+	this_center_color = this.get_darker_color(color,0.3);
+	this_url_link_color = this_center_color;
+	this_url_color = this.get_lighter_color(color,0.3);
+	
+	var raph_center = this.draw_raph_bao(bao_center_map_pos,this_center_color);
 	
 	if(debug_f == 1) {
 		this.paper.text(bao_center_map_pos[0], bao_center_map_pos[1], this.jie_graph.baos.indexOf(this_bao));
@@ -334,7 +351,7 @@ Wj_Jie_Map.prototype.draw_bao = function(this_bao,debug_f) {
 				link_end[0] = bao_center_map_pos[0] + this_url_rel_pos[0];
 				link_end[1] = bao_center_map_pos[1] + this_url_rel_pos[1];
 				
-				raph_url_links[ix_url] = this.draw_line(bao_center_map_pos,link_end,this.url_link_color,this.url_link_thk,0);
+				raph_url_links[ix_url] = this.draw_line(bao_center_map_pos,link_end,this_url_link_color,this.url_link_thk,0);
 				rel_url_pos[ix_url] = this_url_rel_pos;
 			}
 		}
@@ -346,7 +363,7 @@ Wj_Jie_Map.prototype.draw_bao = function(this_bao,debug_f) {
 			url_pos[0] = bao_center_map_pos[0] + rel_url_pos[ix_url][0];
 			url_pos[1] = bao_center_map_pos[1] + rel_url_pos[ix_url][1];
 			
-			raph_urls[ix_url] = this.draw_raph_url(url_pos,this_bao.urls[ix_url]);
+			raph_urls[ix_url] = this.draw_raph_url(url_pos,this_bao.urls[ix_url],this_url_color);
 		}
 		
 		
@@ -378,24 +395,29 @@ Wj_Jie_Map.prototype.bao_toFront = function(bao) {
 
 };
 
-Wj_Jie_Map.prototype.draw_raph_bao = function (pos) {
+Wj_Jie_Map.prototype.draw_raph_bao = function (pos,color) {
 	
 	var raph_bao = this.paper.circle(pos[0], pos[1], this.bao_radius);
 
-    raph_bao.attr('fill', this.bao_color);
-    raph_bao.attr('stroke', this.bao_line_color);
+	this_bao_color = color;
+	this_bao_line_color = color;
+	
+    raph_bao.attr('fill', this_bao_color);
+    raph_bao.attr('stroke', this_bao_line_color);
     raph_bao.attr('stroke-width', this.bao_line_thk);
 
     return raph_bao;
 };
 
-Wj_Jie_Map.prototype.draw_raph_url = function (pos,url_obj) {
+Wj_Jie_Map.prototype.draw_raph_url = function (pos,url_obj,color) {
     
 	var raph_url = this.paper.circle(pos[0], pos[1], this.url_radius);
 
-	raph_url.attr('fill', this.url_color);
+	this_url_color = color;
+	this_url_line_color = this.get_darker_color(color,0.15);
 	
-	raph_url.attr('stroke', this.url_line_color);
+	raph_url.attr('fill', this_url_color);
+	raph_url.attr('stroke', this_url_line_color);
 	raph_url.attr('stroke-width', this.url_line_thk);
 
 	raph_url.attr('cursor', 'pointer');
@@ -408,8 +430,6 @@ Wj_Jie_Map.prototype.draw_raph_url = function (pos,url_obj) {
 };
 
 Wj_Jie_Map.prototype.draw_jie_links = function() {
-	
-	this.vert_color_list = Please.make_color({colors_returned:this.jie_list.length})
 	
 	for(var ix_jie in this.jie_list) {
 		var this_jie = this.jie_list[ix_jie];
@@ -465,6 +485,51 @@ Wj_Jie_Map.prototype.draw_line = function (pos_init,pos_end,color,thk,send_to_ba
 	
     return raph_path;
 };
+
+Wj_Jie_Map.prototype.get_darker_color = function (color,size) {
+	var color_HSV = Please.HEX_to_HSV(color);
+	color_HSV.v = color_HSV.v*(1-size);
+	return Please.HSV_to_HEX(color_HSV);
+}
+
+Wj_Jie_Map.prototype.get_lighter_color = function (color,size) {
+	var color_HSV = Please.HEX_to_HSV(color);
+	color_HSV.v = color_HSV.v + (1-color_HSV.v)*size;
+	return Please.HSV_to_HEX(color_HSV);
+}
+
+Wj_Jie_Map.prototype.mix_colors = function (colors) {
+	
+	var hues = new Array();
+	var sats = new Array();
+	var vals = new Array();
+		
+	for(ix_color in colors) {
+		var color_HSV = Please.HEX_to_HSV(colors[ix_color]);
+		
+		hues.push(color_HSV.h);
+		sats.push(color_HSV.s);
+		vals.push(color_HSV.v);
+	}
+	
+	var hue_mean = 0;
+	var sat_mean = 0;
+	var val_mean = 0;
+	
+	for(ix_hue in hues) {
+		hue_mean += hues[ix_hue]/hues.length;
+		sat_mean += sats[ix_hue]/sats.length;
+		val_mean += vals[ix_hue]/vals.length;
+	}
+	
+	var color_HSV;
+	
+	color_HSV.h = hue_mean;
+	color_HSV.s = sat_mean;
+	color_HSV.v = val_mean;
+	
+	return Please.HSV_to_HEX(color_HSV);
+}
 
 //===================================
 // Jie Data Box
