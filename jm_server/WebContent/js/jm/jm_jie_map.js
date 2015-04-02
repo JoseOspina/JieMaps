@@ -33,7 +33,11 @@ function Wj_Jie_Map(canvas_name,jie_data_box) {
 	this.url_radius = 6*this.init_scale; // url radius
 	this.url_dist = 12*this.init_scale; // url distance to bao center
 	this.url_link_thk = 6; // the distance from the center of the bao to the
-
+	
+	this.url_color_lightness = 0.3;
+	this.url_border_darkness = 0.15;
+	this.bao_color_darkness = 0.3;
+	
 	// JieDataBox Style
 	this.jd_opacity = 0.8;
 	
@@ -318,9 +322,9 @@ Wj_Jie_Map.prototype.draw_bao = function(this_bao,color,debug_f) {
 	
 	var bao_center_map_pos = this.mapcoord_to_paper(this_bao.graph.pos);
 	
-	this_center_color = this.get_darker_color(color,0.3);
+	this_center_color = this.get_darker_color(color,this.bao_color_darkness);
 	this_url_link_color = this_center_color;
-	this_url_color = this.get_lighter_color(color,0.3);
+	this_url_color = this.get_lighter_color(color,this.url_color_lightness);
 	
 	var raph_center = this.draw_raph_bao(bao_center_map_pos,this_center_color);
 	
@@ -415,7 +419,7 @@ Wj_Jie_Map.prototype.draw_raph_url = function (pos,url_obj,color) {
 	var raph_url = this.paper.circle(pos[0], pos[1], this.url_radius);
 
 	var this_url_color = color;
-	var this_url_line_color = this.get_darker_color(color,0.15);
+	var this_url_line_color = this.get_darker_color(color,this.url_border_darkness);
 	var this_url_hover_color = this_url_line_color;
 	
 	raph_url.attr('fill', this_url_color);
@@ -579,7 +583,7 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
 	
     this_back_color = this.vert_color_list[jie_ix];
     
-    $('#jie_data_box'+this_el_id).css("background-color",this_back_color);
+    $('#jie_data_box'+this_el_id).css("background-color",this.get_lighter_color(this_back_color,this.url_color_lightness));
     this.change_alpha($('#jie_data_box'+this_el_id), this.jd_opacity);
     
 	// append, into the jie div, the div for the header and that of the content
