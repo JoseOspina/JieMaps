@@ -24,7 +24,11 @@ function Wj_Jie_Map(canvas_name,jie_data_box) {
 	// vertices style
 	this.vert_thk = 16*this.init_scale; // the thickness of the vertices among baos
 	this.vert_color_count = 0; // a counter to plot the vertices of each new jie
-	this.vert_color_list = this.vert_color_list = Please.make_color({colors_returned:50,seed:"111",full_random:false});
+	this.vert_color_list = this.vert_color_list = Please.make_color({	colors_returned:50,
+																		seed:"111",
+																		full_random:true,
+																		minval:0.3,
+																		maxval:0.7});
 	
 	// urls style
 	this.url_ang0 = wj_deg2rad(-15); // the inital rotation of the branches
@@ -413,8 +417,9 @@ Wj_Jie_Map.prototype.draw_raph_url = function (pos,url_obj,color) {
     
 	var raph_url = this.paper.circle(pos[0], pos[1], this.url_radius);
 
-	this_url_color = color;
-	this_url_line_color = this.get_darker_color(color,0.15);
+	var this_url_color = color;
+	var this_url_line_color = this.get_darker_color(color,0.15);
+	var this_url_hover_color = this_url_line_color;
 	
 	raph_url.attr('fill', this_url_color);
 	raph_url.attr('stroke', this_url_line_color);
@@ -425,6 +430,12 @@ Wj_Jie_Map.prototype.draw_raph_url = function (pos,url_obj,color) {
     $(raph_url.node).click(function () {
         window.open(url_obj.url);
     });
+    
+    $(raph_url.node).hover(function () {
+    	$(this).attr('fill',this_url_hover_color);
+    }, function () {
+		$(this).attr('fill',this_url_color);
+	});
          
     return raph_url;
 };
@@ -564,6 +575,10 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
 		$(this.jd_base_div_ref).append(el_to_append);
 	}
 	
+    this_back_color = this.vert_color_list[jie_ix];
+    
+    $('#jie_data_box'+this_el_id).css("background-color",this_back_color);
+    
 	// append, into the jie div, the div for the header and that of the content
 	$('#jie_data_box'+this_el_id).append($("<div class = jdbx_jie_head id=jdbx_jie_head" + this_el_id + ">"))
 	$('#jie_data_box'+this_el_id).append($("<div class = jdbx_jie_content id=jdbx_jie_content" + this_el_id + ">"))
