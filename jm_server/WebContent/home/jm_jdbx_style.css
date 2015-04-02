@@ -2,7 +2,6 @@
 	font-size: 14px;
 	font-family: "calibri";
 	width:100%;
-	padding:4px;
 	float:left;
 	clear:both;
 }
@@ -29,13 +28,13 @@
 
 .jdbx_jie_head_content {
 	margin-top: 0px;
-	width:calc(100% - 4px - 4px - 20px - 2px - 2px - 20px - 2px - 2px);
+	width:calc(100% - 20px - 2px - 2px - 20px - 2px - 2px);
 	float:left;
 }
 
 .jdbx_jie_head_content_p {
 	font-weight: bold;
-	margin-top: 0;
+	margin-top: 1.6px;
     margin-bottom: 0;
     margin-left: 0;
     margin-right: 0;
@@ -44,7 +43,7 @@
 .jdbx_jie_head_content_e {
 	font-size: 12px;
 	font-family: "calibri";
-	height: calc(20px - 4px - 4px - 2px - 2px - 2px);
+	height: calc(20px - 2px - 2px);
     width:calc(100% - 5px);
     resize: none;
 }
@@ -65,21 +64,24 @@
 .jdbx_jie_content {
 	margin-top: 4px;
 	display: none;
-	width:100%;
+	width: calc(100%);
+	clear:both;
+}
+
+.jdbx_jie_metadata {
+	display: none;
+	width: calc(100%);
+	height: 20px;
 	float:left;
 	clear:both;
 }
 
 .jdbx_jie_desc {
-	margin-top: 0px;
-	margin-left: 0px;
-	width: calc(100% - 4px - 4px - 2px - 20px - 2px - 2px);
-	float:left;
-	clear:both;
 }
 
 .jdbx_jie_desc_p {
 	font-size: 12px;
+	height: 20px;
 	margin-top: 0;
     margin-bottom: 0;
     margin-left: 0;
@@ -107,8 +109,9 @@
 }
 
 .jdbx_bao_data_box {
-	width:100%;
+	width: calc(100%);
 	padding-left:10px;
+	margin-top: 4px;
 	float:left;
 	clear:both;
 }

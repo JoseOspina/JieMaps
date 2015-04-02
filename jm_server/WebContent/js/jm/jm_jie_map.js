@@ -624,9 +624,12 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
 			
 	});
 	
-	// append, into the div for jie content, a div with a description of the jie (still TBD what a "description" is)
-	$('#jdbx_jie_content'+this_el_id).append($("<div class = jdbx_jie_desc id=jdbx_jie_desc" + this_el_id + " data_edit_f=0>"))
-	$('#jdbx_jie_content'+this_el_id).append($("<div class = jdbx_jie_desc_edit id=jdbx_jie_desc_edit" + this_el_id + ">"))
+	// append, into the div for jie content, a div with metadata of the jie (current data is only the description)
+	$('#jdbx_jie_content'+this_el_id).append($("<div class = jdbx_jie_metadata id=jdbx_jie_metadata" + this_el_id + ">"))
+
+	// append, into the div for jie metadata, a div with the description of the jie and its edition button
+	$('#jdbx_jie_metadata'+this_el_id).append($("<div class = jdbx_jie_desc id=jdbx_jie_desc" + this_el_id + " data_edit_f=0>"))
+	$('#jdbx_jie_metadata'+this_el_id).append($("<div class = jdbx_jie_desc_edit id=jdbx_jie_desc_edit" + this_el_id + ">"))
 
 	// add a paragraph with a description of the jie to the description div
 	$('#jdbx_jie_desc'+this_el_id).append($("<p class = jdbx_jie_desc_p " +
