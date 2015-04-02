@@ -14,8 +14,6 @@ function Wj_Jie_Map(canvas_name,jie_data_box) {
 	// bao style
 	this.bao_radius = 10*this.init_scale; // the radius of the central circle of a bao
 	this.bao_line_thk = 0*this.init_scale; // the thickness of the border of the bao
-	this.bao_color = '#E7E7E7'; // the color of the bao central cricle
-	this.bao_line_color = '#E7E7E7'; // the color of the bao border
 
 	this.jie_name_indent = this.init_scale*10;
 	this.jie_name_dist = this.init_scale*20;
@@ -34,12 +32,11 @@ function Wj_Jie_Map(canvas_name,jie_data_box) {
 	this.url_ang0 = wj_deg2rad(-15); // the inital rotation of the branches
 	this.url_radius = 6*this.init_scale; // url radius
 	this.url_dist = 12*this.init_scale; // url distance to bao center
-	this.url_color = "#C5D7E0"; // the standard color of a the bubble
-	this.url_hover_color = '#C5D7E0'; // the standard color of a the bubble
-	this.url_line_color = '#B1CBD9'; // the standard color of a border of the
 	this.url_link_thk = 6; // the distance from the center of the bao to the
-	this.url_link_color = '#B1CBD9'; // the color of the branch that connects the
 
+	// JieDataBox Style
+	this.jd_opacity = 0.8;
+	
 	// Jie Map components
 	this.jie_list = null; // store a complete jie list with all the jies currently in the map
 	this.new_jies_ixs = new Array(); // store a list of the ixs of the jies in the jie_list that are new
@@ -540,7 +537,12 @@ Wj_Jie_Map.prototype.mix_colors = function (colors) {
 	color_HSV.v = val_mean;
 	
 	return Please.HSV_to_HEX(color_HSV);
-}
+};
+
+Wj_Jie_Map.prototype.change_alpha = function (e, alpha) { //e = jQuery element, alpha = background-opacity
+    b = e.css('backgroundColor');
+    e.css('backgroundColor', 'rgba' + b.slice(b.indexOf('('), ( (b.match(/,/g).length == 2) ? -1 : b.lastIndexOf(',') - b.length) ) + ', '+alpha+')');
+};
 
 //===================================
 // Jie Data Box
@@ -578,6 +580,7 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
     this_back_color = this.vert_color_list[jie_ix];
     
     $('#jie_data_box'+this_el_id).css("background-color",this_back_color);
+    this.change_alpha($('#jie_data_box'+this_el_id), this.jd_opacity);
     
 	// append, into the jie div, the div for the header and that of the content
 	$('#jie_data_box'+this_el_id).append($("<div class = jdbx_jie_head id=jdbx_jie_head" + this_el_id + ">"))

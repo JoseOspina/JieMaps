@@ -1,5 +1,6 @@
 body {
 	font-family: Helvetica;
+	margin:0px;
 }
 
 #map_container {
@@ -111,9 +112,9 @@ body {
 
 #map_data {
 	height:70%;
-	width:200px;
+	width:50%;
 	position: fixed;
-	display:none;
+	display:inline;
 	top: 100px;
     right: 0px;
 	overflow: hidden;

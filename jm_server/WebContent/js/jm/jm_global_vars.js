@@ -52,6 +52,6 @@ $(document).ready(function()  {
 		
 	});
     	
-	// get_jie_data_from_server('abaft'); 
+	get_jie_data_from_server('abaft'); 
 	
 });
