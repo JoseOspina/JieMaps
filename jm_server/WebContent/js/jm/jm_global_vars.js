@@ -25,10 +25,10 @@ $(document).ready(function()  {
 		var jie_map = WJ_GLOBAL_jie_map;
     	var jie_id = jie_map.get_new_jie_id();
     	var bao_id = jie_map.get_new_bao_id();
-    	
+   	
     	var new_jie = new JieObj(jie_id,null,null,null,bao_id);
-    	
-    	var new_jie_ix = jie_map.add_jie(new_jie,0,1);
+		var options =  {pos:0,expand_f:true, edit_on_f:true};
+    	var new_jie_ix = jie_map.add_jie(new_jie,options);
     	
     	jie_map.new_jies_ixs.push(new_jie_ix);
     	

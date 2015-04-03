@@ -142,9 +142,11 @@ Wj_Jie_Map.prototype.set_jies = function(jie_list) {
 	}
 };
 
-Wj_Jie_Map.prototype.add_jie = function(jie,jd_pos,jd_expand) {
+Wj_Jie_Map.prototype.add_jie = function(jie,jd_options) {
 	
 	var jie_ix = 0;
+	
+	jd_options = jd_options || {pos:0, expand_f:false, edit_on_f:false};
 	
 	if(this.jie_list) {
 		// update the jie list
@@ -156,7 +158,7 @@ Wj_Jie_Map.prototype.add_jie = function(jie,jd_pos,jd_expand) {
 		this.jie_graph.add_baos_and_links_from_jie(jie);
 				
 		// update the jie data
-		this.jd_append_jie(jie_ix,jd_pos,jd_expand);
+		this.jd_append_jie(jie_ix,jd_options);
 		
 	} else {
 		// if empty, create empty array and add the jie
@@ -181,10 +183,12 @@ Wj_Jie_Map.prototype.remove_jie = function(jie_ix) {
 	}
 };
 
-Wj_Jie_Map.prototype.add_bao = function(bao,jie_ix) {
+Wj_Jie_Map.prototype.add_bao = function(bao,jie_ix,jd_options) {
 	
 	var link_to = new Array();
 	var bao_ix = '';
+	
+	jd_options = jd_options || {pos:0, expand_f:false, edit_on_f:false};
 	
 	// if jie list 
 	if(this.jie_list) {
@@ -205,7 +209,7 @@ Wj_Jie_Map.prototype.add_bao = function(bao,jie_ix) {
 			this.jie_graph.add_bao(bao,link_to);
 			
 			// add bao to jie data box
-			this.jd_append_bao(jie_ix,bao_ix) ;
+			this.jd_append_bao(jie_ix,bao_ix,jd_options) ;
 			
 		} else {
 			// index in jie list does not exist, do nothing
@@ -220,6 +224,7 @@ Wj_Jie_Map.prototype.add_bao = function(bao,jie_ix) {
 Wj_Jie_Map.prototype.add_url = function(url,jie_ix,bao_ix) {
 	
 	var url_ix = 0;
+	jd_options = jd_options || {pos:0, expand_f:false, edit_on_f:false};
 	
 	if(this.jie_list) {
 		if(this.jie_list[jie_ix]) {
@@ -228,7 +233,7 @@ Wj_Jie_Map.prototype.add_url = function(url,jie_ix,bao_ix) {
 				this.jie_list[jie_ix].baos[bao_ix].urls.push(url);
 				url_ix = this.jie_list[jie_ix].baos[bao_ix].urls.length-1;
 				// add url to jie data box
-				this.jd_append_url(jie_ix,bao_ix,url_ix);
+				this.jd_append_url(jie_ix,bao_ix,url_ix,jd_options);
 			}							
 		}
 	}
@@ -611,19 +616,26 @@ Wj_Jie_Map.prototype.jd_remove_jie = function(jie_ix) {
 	$(this.jd_get_divref_from_jieix(jie_ix)).remove();
 }
 
-Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
+Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,options) {
 
-	// adds a jie div with all its baos and urls sub divs to the jie data base div
-
-	expanded = expanded || 0;
+	options = options || {pos:0, expand_f:0, edit_on_f:false};
+	
+	expand_f = options.expand_f || false;
+	pos = options.pos || 0;
+	edit_on_f = options.edit_on_f || false;
 	
 	var jie = this.jie_list[jie_ix];
 	
 	var this_el_id = jie_ix;
 	
     var el_to_append = $("<div class = jie_data_box id = jie_data_box" + this_el_id + " data_jie_ix = " + jie_ix + "/>");
+    
     if (typeof pos !== 'undefined') {
-		$(this.jd_get_divref_from_boxix(pos)).before(el_to_append);
+    	if($(this.jd_base_div_ref).children().length > 0) {
+    		$(this.jd_get_divref_from_boxix(pos)).before(el_to_append);	
+    	} else {
+    		$(this.jd_base_div_ref).append(el_to_append);
+    	}		
 	} else {
 		$(this.jd_base_div_ref).append(el_to_append);
 	}
@@ -705,7 +717,7 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
 		$('#jdbx_jie_content'+this_el_id).slideToggle('show');
 	});
 	
-	if(expanded == 1) {
+	if(expand_f == 1) {
 		$('#jdbx_jie_content'+this_el_id).slideToggle('show');
 	}
 	
@@ -713,7 +725,7 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
 	$('#jdbx_jie_content'+this_el_id).append($("<div class = jdbx_jie_baos id=jdbx_jie_baos" + this_el_id + ">"))
 	
 	// append all baos
-	this.jd_append_baos(jie_ix,expanded);
+	this.jd_append_baos(jie_ix,options);
 	
 	// append the "new bao" div
 	$('#jdbx_jie_content'+this_el_id).append($("<div class = jdbx_new_bao_box id=jdbx_new_bao_box" + this_el_id + 
@@ -731,8 +743,10 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
 		var bao_id = WJ_GLOBAL_jie_map.get_new_bao_id();
 		var new_bao = new BaoObj(bao_id);
 		
+		jd_options = {edit_on_f:true,expand_f:true};
+		
 		// add bao to the jie map
-		var bao_ix = WJ_GLOBAL_jie_map.add_bao(new_bao,data_jie_ix);
+		var bao_ix = WJ_GLOBAL_jie_map.add_bao(new_bao,data_jie_ix,jd_options);
 		
 		WJ_GLOBAL_jie_map.layout_force();
 		WJ_GLOBAL_jie_map.draw();
@@ -781,19 +795,23 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
 	
 };
 
-Wj_Jie_Map.prototype.jd_append_baos = function(jie_ix,expanded) {
+Wj_Jie_Map.prototype.jd_append_baos = function(jie_ix,options) {
 	
 	var jie = this.jie_list[jie_ix];
 	
 	for (var bao_ix in jie.baos) {
 		// append each bao
-		this.jd_append_bao(jie_ix,bao_ix,expanded);
+		this.jd_append_bao(jie_ix,bao_ix,options);
 	}
 }
 
-Wj_Jie_Map.prototype.jd_append_bao = function(jie_ix,bao_ix,expanded) {
+Wj_Jie_Map.prototype.jd_append_bao = function(jie_ix,bao_ix,options) {
 	
-	expanded = expanded || 0;
+	options = options || {pos:0, expand_f:0, edit_on_f:false};
+	
+	expand_f = options.expand_f || false;
+	pos = options.pos || 0;
+	edit_on_f = options.edit_on_f || false;
 	
 	// adds a bao div with all its urls sub divs to the jie div of the jie_ix specified
 	
@@ -802,7 +820,7 @@ Wj_Jie_Map.prototype.jd_append_bao = function(jie_ix,bao_ix,expanded) {
 		
 	var this_el_id = jie_ix + "_" + bao_ix;
 
-	// baos container id is standard, see jd_append_jie
+	// baos container id is standard
 	jdbx_jie_baos_ref = "#jdbx_jie_baos"+jie_ix;
 	
 	// append the div in which this bao data will be added. Store the jie index and the bao index as attributes
@@ -869,7 +887,7 @@ Wj_Jie_Map.prototype.jd_append_bao = function(jie_ix,bao_ix,expanded) {
 		$('#jdbx_bao_content'+this_el_id).slideToggle('show');
 	});
 	
-	if(expanded == 1) {
+	if(expand_f == 1) {
 		$('#jdbx_bao_content'+this_el_id).slideToggle('show');
 	}
 	
@@ -877,7 +895,7 @@ Wj_Jie_Map.prototype.jd_append_bao = function(jie_ix,bao_ix,expanded) {
 	$('#jdbx_bao_content'+this_el_id).append($("<div class = jdbx_bao_urls id=jdbx_bao_urls" + this_el_id + ">"))
 	
 	// append all urls
-	this.jd_append_urls(jie_ix,bao_ix,expanded);
+	this.jd_append_urls(jie_ix,bao_ix,options);
 	
 	// append the "new url" division
 	$('#jdbx_bao_content'+this_el_id).append($("<div class = jdbx_new_url_box id=jdbx_new_url_box" + this_el_id + 
@@ -898,8 +916,10 @@ Wj_Jie_Map.prototype.jd_append_bao = function(jie_ix,bao_ix,expanded) {
 		
 		var new_url = new UrlObj(url_id);
 		
+		jd_options = {edit_on_f:true,expand_f:true};
+		
 		// add bao to the jie map
-		var url_ix = WJ_GLOBAL_jie_map.add_url(new_url,data_jie_ix,data_bao_ix);
+		var url_ix = WJ_GLOBAL_jie_map.add_url(new_url,data_jie_ix,data_bao_ix,jd_options);
 
 		WJ_GLOBAL_jie_map.layout_force();
 		WJ_GLOBAL_jie_map.draw();
@@ -951,28 +971,32 @@ Wj_Jie_Map.prototype.jd_append_bao = function(jie_ix,bao_ix,expanded) {
 
 };
 
-Wj_Jie_Map.prototype.jd_append_urls = function(jie_ix,bao_ix,expanded) {
+Wj_Jie_Map.prototype.jd_append_urls = function(jie_ix,bao_ix,options) {
 	
 	var jie = this.jie_list[jie_ix];
 	var bao = jie.baos[bao_ix];
 	
 	for (var url_ix in bao.urls) {
 		// append each url
-		this.jd_append_url(jie_ix,bao_ix,url_ix,expanded);
+		this.jd_append_url(jie_ix,bao_ix,url_ix,options);
 	}
 }
 
-Wj_Jie_Map.prototype.jd_append_url = function(jie_ix,bao_ix,url_ix,expanded) {
+Wj_Jie_Map.prototype.jd_append_url = function(jie_ix,bao_ix,url_ix,options) {
 	
-	expanded = expanded || 0;
+	options = options || {pos:0, expand_f:0, edit_on_f:false};
 	
+	expand_f = options.expand_f || false;
+	pos = options.pos || 0;
+	edit_on_f = options.edit_on_f || false;
+		
 	var jie = this.jie_list[jie_ix];
 	var bao = jie.baos[bao_ix];
 	var url = bao.urls[url_ix];
 
 	var this_el_id = jie_ix + "_" + bao_ix + "_" + url_ix;
 	
-	// baos container id is standard, see jd_append_jie
+	// baos container id is standard
 	jdbx_bao_urls_ref = "#jdbx_bao_urls"+jie_ix+"_"+bao_ix;
 
 	var el_to_append = $("<div class = jdbx_url_data_box id=jdbx_url_data_box" + this_el_id + 
@@ -1029,7 +1053,10 @@ Wj_Jie_Map.prototype.jd_append_url = function(jie_ix,bao_ix,url_ix,expanded) {
 		}
 			
 	});
-	
+
+	if(edit_on_f) {
+		$("#jdbx_url_head_edit"+this_el_id).trigger('click');
+	}	
 	
 	// append, into the div for url content, a div with metadata of the url (current data is only the description)
 	$('#jdbx_url_content'+this_el_id).append($("<div class = jdbx_url_metadata id=jdbx_url_metadata" + this_el_id + ">"))
@@ -1089,7 +1116,7 @@ Wj_Jie_Map.prototype.jd_append_url = function(jie_ix,bao_ix,url_ix,expanded) {
 		$('#jdbx_url_content'+this_el_id).slideToggle('show');
 	});
 	
-	if(expanded == 1) {
+	if(expand_f == 1) {
 		$('#jdbx_url_content'+this_el_id).slideToggle('show');
 	}
 	
