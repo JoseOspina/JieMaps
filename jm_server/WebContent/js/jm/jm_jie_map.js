@@ -167,6 +167,20 @@ Wj_Jie_Map.prototype.add_jie = function(jie,jd_pos,jd_expand) {
 	return jie_ix;
 };
 
+Wj_Jie_Map.prototype.remove_jie = function(jie_ix) {
+	
+	if(this.jie_list) {
+		// do not show this jie in the map and redraw
+		this.jie_list[jie_ix].map_data.show_f = false;
+		
+		// remove data from Jie Data box
+		this.jd_remove_jie(jie_ix);
+		
+		this.draw();
+		
+	}
+};
+
 Wj_Jie_Map.prototype.add_bao = function(bao,jie_ix) {
 	
 	var link_to = new Array();
@@ -286,18 +300,30 @@ Wj_Jie_Map.prototype.draw_baos = function(debug_f) {
 	for(var ix_bao in this.jie_graph.baos) {
 		
 		var this_bao = this.jie_graph.baos[ix_bao];
+		
+		// check in which jies this bao is present to decide if it
+		// should be shown and which color
 		var injies = this_bao.graph.injies;
 		
-		this_colors = new Array();
-		
-		for(ix_injie in injies) {
+		var this_colors = new Array();
+		var this_show_fs = new Array();
+		for(var ix_injie in injies) {
 			this_colors.push(this.vert_color_list[injies[ix_injie]]);
+			this_show_fs.push(this.jie_list[injies[ix_injie]].map_data.show_f);
 		}
-				
 		var this_color = this.mix_colors(this_colors);
 		
+		// if any of the jies containing this node is to be shown, the node is shown
+		var show_f = false;
+		for(var ix_showfs in this_show_fs) {
+			if(this_show_fs[ix_showfs]) {
+				show_f = true;
+			}				
+		}
 		
-		this.draw_bao(this_bao,this_color,debug_f);
+		if(show_f) {
+			this.draw_bao(this_bao,this_color,debug_f);
+		}
 	}
 };
 
@@ -445,11 +471,13 @@ Wj_Jie_Map.prototype.draw_jie_links = function() {
 	
 	for(var ix_jie in this.jie_list) {
 		var this_jie = this.jie_list[ix_jie];
-		for(var ix_bao = 0; ix_bao < this_jie.baos.length - 1; ix_bao++) {
-			var this_bao = this_jie.baos[ix_bao];
-			var next_bao = this_jie.baos[ix_bao+1];
-			var ix_color = ix_jie % this.vert_color_list.length;
-			this.draw_line(this.mapcoord_to_paper(this_bao.graph.pos),this.mapcoord_to_paper(next_bao.graph.pos),this.vert_color_list[ix_color],this.vert_thk,1);
+		if(this_jie.map_data.show_f) {
+			for(var ix_bao = 0; ix_bao < this_jie.baos.length - 1; ix_bao++) {
+				var this_bao = this_jie.baos[ix_bao];
+				var next_bao = this_jie.baos[ix_bao+1];
+				var ix_color = ix_jie % this.vert_color_list.length;
+				this.draw_line(this.mapcoord_to_paper(this_bao.graph.pos),this.mapcoord_to_paper(next_bao.graph.pos),this.vert_color_list[ix_color],this.vert_thk,1);
+			}
 		}
 	}
 };
@@ -457,7 +485,10 @@ Wj_Jie_Map.prototype.draw_jie_links = function() {
 Wj_Jie_Map.prototype.draw_names = function() {
 	
 	for(var ix_jie in this.jie_list) {
-		this.draw_jie_name(this.jie_list[ix_jie],this.vert_color_list[ix_jie]);
+		var this_jie = this.jie_list[ix_jie];
+		if(this_jie.map_data.show_f) {
+			this.draw_jie_name(this_jie,this.vert_color_list[ix_jie]);
+		}
 	}
 };
 
@@ -560,8 +591,24 @@ Wj_Jie_Map.prototype.jd_empty = function() {
 Wj_Jie_Map.prototype.jd_get_divref_from_boxix = function(boxix) {
 	
 	var childs = $(this.jd_base_div_ref).children();
-	
 	return ("#"+$(childs[boxix]).attr('id'));
+}
+
+Wj_Jie_Map.prototype.jd_get_divref_from_jieix = function(jieix) {
+	
+	var childs = $(this.jd_base_div_ref).children();
+	
+	for(child_ix in childs) {
+		var this_child = childs[child_ix];
+		var this_jieix = $().attr('data_jie_ix');
+		if(this_jieix == jieix) {
+			return ("#"+$(this_child).attr('id'));
+		}
+	}
+}
+
+Wj_Jie_Map.prototype.jd_remove_jie = function(jie_ix) {
+	$(this.jd_get_divref_from_jieix(jie_ix)).remove();
 }
 
 Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
@@ -594,7 +641,9 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
 	$('#jdbx_jie_head'+this_el_id).append($("<div class = jdbx_jie_head_ctr id=jdbx_jie_head_ctr" + this_el_id + ">"))
 	// append, into the header div, the div for the header text (title). Add custom attributo to control its edition 
 	$('#jdbx_jie_head'+this_el_id).append($("<div class = jdbx_jie_head_content id=jdbx_jie_head_content" + this_el_id + " data_edit_f=0>"))
-	// append, into the header div, and the div for the edit button
+	// append, into the header div, the div for the delete button
+	$('#jdbx_jie_head'+this_el_id).append($("<div class = jdbx_jie_head_delete id=jdbx_jie_head_delete" + this_el_id + ">"))
+		// append, into the header div, the div for the edit button
 	$('#jdbx_jie_head'+this_el_id).append($("<div class = jdbx_jie_head_edit id=jdbx_jie_head_edit" + this_el_id + ">"))
 	// append, into the header div, a dummy div to clear both so that te head div has correct height
 	$('#jdbx_jie_head'+this_el_id).append($("<div class = jdbx_jie_head_last id=jdbx_jie_head_last" + this_el_id + ">"))
@@ -628,6 +677,20 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
             $('#jdbx_jie_head_content'+this_el_id).attr('data_edit_f','0')
 		}
 			
+	});
+	
+	// assign the action of deleting the jie from the map
+	$("#jdbx_jie_head_delete"+this_el_id).click(function () {
+		
+		var this_jie_ix = $("#jie_data_box" + this_el_id).attr('data_jie_ix')
+		
+		// update the jie list
+		WJ_GLOBAL_jie_map.remove_jie(this_jie_ix);
+		
+		// update paragraph with the jie title
+        $('#jie_data_box'+this_el_id).slideUp();
+      
+		
 	});
 	
 	// assign the action of showing/hiding jie contents

@@ -35,13 +35,21 @@ function BaoObj(id, title, desc, urls, url_id) {
 	this.raph = new BaoRaph();
 };
 
+function jie_JieMapData(show_f) {
+	this.show_f = show_f || true;
+};
+
 function JieObj(id, title, desc, baos, bao_id) {
 	// Standard elements
-	bao_id = bao_id || -1;	
+	var bao_id = bao_id || -1;	
+	
 	this.id = id || -1;
 	this.title = title || 'jie name';
 	this.baos = baos || new Array(new BaoObj(bao_id));
-	this.desc = desc || "jie description with #thetag and #othertag";
+	this.desc = desc || "jie description";
+	
+	// Additional data needed for JieMap manipulation
+	this.map_data = new jie_JieMapData(true);
 	
 	// Raphael elements
 	this.raph = null;
