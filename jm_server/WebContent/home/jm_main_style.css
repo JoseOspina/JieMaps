@@ -113,14 +113,15 @@ body {
 }
 
 #map_data {
-	height:70%;
-	width:50%;
+	height:auto;
+	max-height:70%;
+	width:35%;
 	position: fixed;
 	display:inline;
 	top: 100px;
     right: 0px;
     margin-right:20px;
 	overflow: hidden;
-	overflow-y: auto;	
+	overflow-y: auto;
 }
 

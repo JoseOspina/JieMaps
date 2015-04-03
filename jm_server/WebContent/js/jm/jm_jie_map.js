@@ -596,6 +596,8 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
 	$('#jdbx_jie_head'+this_el_id).append($("<div class = jdbx_jie_head_content id=jdbx_jie_head_content" + this_el_id + " data_edit_f=0>"))
 	// append, into the header div, and the div for the edit button
 	$('#jdbx_jie_head'+this_el_id).append($("<div class = jdbx_jie_head_edit id=jdbx_jie_head_edit" + this_el_id + ">"))
+	// append, into the header div, a dummy div to clear both so that te head div has correct height
+	$('#jdbx_jie_head'+this_el_id).append($("<div class = jdbx_jie_head_last id=jdbx_jie_head_last" + this_el_id + ">"))
 	
 	// append, into the div for the header title, a paragraph with the jie title
 	$('#jdbx_jie_head_content'+this_el_id).append($("<p class = jdbx_jie_head_content_p " +
@@ -682,10 +684,12 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
 	// append all baos
 	this.jd_append_baos(jie_ix,expanded);
 	
-	// append the "new bao" division
+	// append the "new bao" div
 	$('#jdbx_jie_content'+this_el_id).append($("<div class = jdbx_new_bao_box id=jdbx_new_bao_box" + this_el_id + 
 			" data_jie_ix=" + jie_ix + ">"));
-	
+	// append the ctr div to the new bao div
+	$('#jdbx_new_bao_box'+this_el_id).append($("<div class = jdbx_new_bao_ctr id=jdbx_new_bao_ctr" + this_el_id + ">"))
+	// appen the text to the new bao div
 	$('#jdbx_new_bao_box'+this_el_id).append($("<p class = jdbx_new_bao_box_text_content_p " +
 			"id = jdbx_new_bao_box_text_content_p" + this_el_id + ">add new bao</p>"));
 	
@@ -748,6 +752,9 @@ Wj_Jie_Map.prototype.jd_append_bao = function(jie_ix,bao_ix,expanded) {
 	$('#jdbx_bao_head'+this_el_id).append($("<div class = jdbx_bao_head_content id=jdbx_bao_head_content" + this_el_id + " data_edit_f=0>"))
 	// append, into the header div, and the div for the edit button
 	$('#jdbx_bao_head'+this_el_id).append($("<div class = jdbx_bao_head_edit id=jdbx_bao_head_edit" + this_el_id + ">"))
+	// append, into the header div, a dummy div to clear both so that te head div has correct height
+	$('#jdbx_bao_head'+this_el_id).append($("<div class = jdbx_bao_head_last id=jdbx_bao_head_last" + this_el_id + ">"))
+	
 	
 	// append, into the div for the header title, a paragraph with the bao title
 	$('#jdbx_bao_head_content'+this_el_id).append($("<p class = jdbx_bao_head_content_p " +
@@ -781,9 +788,12 @@ Wj_Jie_Map.prototype.jd_append_bao = function(jie_ix,bao_ix,expanded) {
 			
 	});
 	
+	// append, into the div for bao content, a div with metadata of the bao (current data is only the description)
+	$('#jdbx_bao_content'+this_el_id).append($("<div class = jdbx_bao_metadata id=jdbx_bao_metadata" + this_el_id + ">"))
+
 	// append, into the div for bao content, a div with a description of the bao (still TBD what a "description" is)
-	$('#jdbx_bao_content'+this_el_id).append($("<div class = jdbx_bao_desc id=jdbx_bao_desc" + this_el_id  + " data_edit_f=0>"))
-	$('#jdbx_bao_content'+this_el_id).append($("<div class = jdbx_bao_desc_edit id=jdbx_bao_desc_edit" + this_el_id + ">"))
+	$('#jdbx_bao_metadata'+this_el_id).append($("<div class = jdbx_bao_desc id=jdbx_bao_desc" + this_el_id  + " data_edit_f=0>"))
+	$('#jdbx_bao_metadata'+this_el_id).append($("<div class = jdbx_bao_desc_edit id=jdbx_bao_desc_edit" + this_el_id + ">"))
 	
 	// add a paragraph with a description of the bao to the description div
 	$('#jdbx_bao_desc'+this_el_id).append($("<p class = jdbx_bao_desc_p " +
@@ -836,7 +846,9 @@ Wj_Jie_Map.prototype.jd_append_bao = function(jie_ix,bao_ix,expanded) {
 	// append the "new url" division
 	$('#jdbx_bao_content'+this_el_id).append($("<div class = jdbx_new_url_box id=jdbx_new_url_box" + this_el_id + 
 			" data_jie_ix=" + jie_ix + " data_bao_ix=" + bao_ix + ">"));
-	
+	// append the ctr div to the new bao div
+	$('#jdbx_new_url_box'+this_el_id).append($("<div class = jdbx_new_url_ctr id=jdbx_new_url_ctr" + this_el_id + ">"))
+	// appen the text to the new bao div
 	$('#jdbx_new_url_box'+this_el_id).append($("<p class = jdbx_new_url_box_text_content_p " +
 			"id = jdbx_new_url_box_text_content_p" + this_el_id + ">add new url</p>"));
 	
@@ -900,6 +912,8 @@ Wj_Jie_Map.prototype.jd_append_url = function(jie_ix,bao_ix,url_ix,expanded) {
 	$('#jdbx_url_head'+this_el_id).append($("<div class = jdbx_url_head_content id=jdbx_url_head_content" + this_el_id + " data_edit_f=0>"))
 	// append, into the header div, and the div for the edit button
 	$('#jdbx_url_head'+this_el_id).append($("<div class = jdbx_url_head_edit id=jdbx_url_head_edit" + this_el_id + ">"))
+	// append, into the header div, a dummy div to clear both so that te head div has correct height
+	$('#jdbx_url_head'+this_el_id).append($("<div class = jdbx_url_head_last id=jdbx_url_head_last" + this_el_id + ">"))
 	
 	
 	// append, into the div for the header title, a paragraph with the url title
@@ -939,9 +953,13 @@ Wj_Jie_Map.prototype.jd_append_url = function(jie_ix,bao_ix,url_ix,expanded) {
 	});
 	
 	
-	// append, into the div for bao content, a div with a description of the url (still TBD what a "description" is)
-	$('#jdbx_url_content'+this_el_id).append($("<div class = jdbx_url_desc id=jdbx_url_desc" + this_el_id  + " data_edit_f=0>"))
-	$('#jdbx_url_content'+this_el_id).append($("<div class = jdbx_url_desc_edit id=jdbx_url_desc_edit" + this_el_id + ">"))
+	// append, into the div for url content, a div with metadata of the url (current data is only the description)
+	$('#jdbx_url_content'+this_el_id).append($("<div class = jdbx_url_metadata id=jdbx_url_metadata" + this_el_id + ">"))
+
+	
+	// append, into the div for url content, a div with a description of the url
+	$('#jdbx_url_metadata'+this_el_id).append($("<div class = jdbx_url_desc id=jdbx_url_desc" + this_el_id  + " data_edit_f=0>"))
+	$('#jdbx_url_metadata'+this_el_id).append($("<div class = jdbx_url_desc_edit id=jdbx_url_desc_edit" + this_el_id + ">"))
 	
 	// add a paragraph with a description of the url to the description div
 	$('#jdbx_url_desc'+this_el_id).append($("<p class = jdbx_url_desc_p " +
