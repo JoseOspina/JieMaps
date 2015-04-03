@@ -1,8 +1,8 @@
 function UrlObj(id, url) {
 	// Standard elements
 	this.id =  id || -1;
-	this.title =  url || 'add_url';
-	this.url =  url || 'add_url';
+	this.title =  url || 'title';
+	this.url =  url || 'http://www.jiemaps.com';
 	this.desc = "url description";
 };
 

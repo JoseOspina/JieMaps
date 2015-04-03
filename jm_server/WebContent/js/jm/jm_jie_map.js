@@ -142,11 +142,12 @@ Wj_Jie_Map.prototype.set_jies = function(jie_list) {
 	}
 };
 
-Wj_Jie_Map.prototype.add_jie = function(jie,jd_options) {
+Wj_Jie_Map.prototype.add_jie = function(jie,map_options,jd_options) {
 	
 	var jie_ix = 0;
 	
 	jd_options = jd_options || {pos:0, expand_f:false, edit_on_f:false};
+	map_options = map_options || {layout_force_f:false, draw_f:false}
 	
 	if(this.jie_list) {
 		// update the jie list
@@ -156,7 +157,15 @@ Wj_Jie_Map.prototype.add_jie = function(jie,jd_options) {
 		
 		// update the jie graph graph
 		this.jie_graph.add_baos_and_links_from_jie(jie);
-				
+
+		if(map_options.layout_force_f) {
+			this.layout_force_f();
+		}
+		
+		if(map_options.draw_f) {
+			this.draw();
+		}
+		
 		// update the jie data
 		this.jd_append_jie(jie_ix,jd_options);
 		
@@ -169,25 +178,36 @@ Wj_Jie_Map.prototype.add_jie = function(jie,jd_options) {
 	return jie_ix;
 };
 
-Wj_Jie_Map.prototype.remove_jie = function(jie_ix) {
+Wj_Jie_Map.prototype.remove_jie = function(jie_ix,map_options) {
+	
+	// Jie is not deleted, but its not shown in the map 
+	// nor in the Jie Data Box
+	
+	map_options = map_options || {layout_force_f:false,draw_f:false}
 	
 	if(this.jie_list) {
 		// do not show this jie in the map and redraw
 		this.jie_list[jie_ix].map_data.show_f = false;
 		
-		// remove data from Jie Data box
+		// hide data from Jie Data box
 		this.jd_remove_jie(jie_ix);
 		
-		this.draw();
+		if(map_options.layout_force_f) {
+			this.layout_force_f();
+		}
 		
+		if(map_options.draw_f) {
+			this.draw();
+		}
 	}
 };
 
-Wj_Jie_Map.prototype.add_bao = function(bao,jie_ix,jd_options) {
+Wj_Jie_Map.prototype.add_bao = function(bao,jie_ix,map_options,jd_options) {
 	
 	var link_to = new Array();
 	var bao_ix = '';
 	
+	map_options = map_options || {layout_force_f:false, draw_f:false}
 	jd_options = jd_options || {pos:0, expand_f:false, edit_on_f:false};
 	
 	// if jie list 
@@ -208,6 +228,14 @@ Wj_Jie_Map.prototype.add_bao = function(bao,jie_ix,jd_options) {
 			// add the bao to the jie_graph
 			this.jie_graph.add_bao(bao,link_to);
 			
+			if(map_options.layout_force_f) {
+				this.layout_force();
+			}
+			
+			if(map_options.draw_f) {
+				this.draw();
+			}
+			
 			// add bao to jie data box
 			this.jd_append_bao(jie_ix,bao_ix,jd_options) ;
 			
@@ -221,10 +249,35 @@ Wj_Jie_Map.prototype.add_bao = function(bao,jie_ix,jd_options) {
 	return bao_ix;
 };
 
-Wj_Jie_Map.prototype.add_url = function(url,jie_ix,bao_ix) {
+Wj_Jie_Map.prototype.remove_bao_of_jie = function(jie_ix,bao_ix,map_options) {
+	
+	map_options = map_options || {layout_force_f:false,draw_f:false}
+		
+	// do not show this jie in the map and redraw
+	if(this.jie_list[jie_ix].baos.length > 1) {
+		this.jie_list[jie_ix].baos.splice(bao_ix,1);
+		
+		this.jie_graph.update_baos_and_links_from_jie_list(this.jie_list);
+		
+		if(map_options.layout_force_f) {
+			this.layout_force();
+		}
+		
+		if(map_options.draw_f) {
+			this.draw();
+		}
+		
+		// remove bao data box
+		this.jd_update_baos(jie_ix);
+	}
+};
+
+Wj_Jie_Map.prototype.add_url = function(url,jie_ix,bao_ix,map_options,jd_options) {
 	
 	var url_ix = 0;
+	
 	jd_options = jd_options || {pos:0, expand_f:false, edit_on_f:false};
+	map_options = map_options || {layout_force_f:false, draw_f:false}
 	
 	if(this.jie_list) {
 		if(this.jie_list[jie_ix]) {
@@ -232,6 +285,15 @@ Wj_Jie_Map.prototype.add_url = function(url,jie_ix,bao_ix) {
 			if(this.jie_list[jie_ix].baos) {
 				this.jie_list[jie_ix].baos[bao_ix].urls.push(url);
 				url_ix = this.jie_list[jie_ix].baos[bao_ix].urls.length-1;
+				
+				if(map_options.layout_force_f) {
+					this.layout_force();
+				}
+				
+				if(map_options.draw_f) {
+					this.draw();
+				}
+				
 				// add url to jie data box
 				this.jd_append_url(jie_ix,bao_ix,url_ix,jd_options);
 			}							
@@ -593,27 +655,29 @@ Wj_Jie_Map.prototype.jd_empty = function() {
 	$(this.jd_base_div_ref).empty();
 };
 
-Wj_Jie_Map.prototype.jd_get_divref_from_boxix = function(boxix) {
+Wj_Jie_Map.prototype.jd_get_jieboxJQ_from_boxix = function(boxix) {
 	
 	var childs = $(this.jd_base_div_ref).children();
-	return ("#"+$(childs[boxix]).attr('id'));
+	return $(childs[boxix]);
 }
 
-Wj_Jie_Map.prototype.jd_get_divref_from_jieix = function(jieix) {
+Wj_Jie_Map.prototype.jd_get_jieboxJQ_from_jieix = function(jieix) {
 	
-	var childs = $(this.jd_base_div_ref).children();
+	return $('#jie_data_box'+jieix);
+}
+
+Wj_Jie_Map.prototype.jd_get_baoboxJQ_from_jieix_and_baoix = function(jieix,baoix) {
 	
-	for(child_ix in childs) {
-		var this_child = childs[child_ix];
-		var this_jieix = $().attr('data_jie_ix');
-		if(this_jieix == jieix) {
-			return ("#"+$(this_child).attr('id'));
-		}
-	}
+	return $('#bao_data_box'+jieix+'_'+baoix);
+}
+
+Wj_Jie_Map.prototype.jd_get_urlboxJQ_from_jieix_baoix_and_urlix = function(jieix,baoix,urlix) {
+	
+	return $('#url_data_box'+jieix+'_'+baoix+'_'+urlix);
 }
 
 Wj_Jie_Map.prototype.jd_remove_jie = function(jie_ix) {
-	$(this.jd_get_divref_from_jieix(jie_ix)).remove();
+	this.jd_get_jieboxJQ_from_jieix(jie_ix).slideUp();
 }
 
 Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,options) {
@@ -632,7 +696,7 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,options) {
     
     if (typeof pos !== 'undefined') {
     	if($(this.jd_base_div_ref).children().length > 0) {
-    		$(this.jd_get_divref_from_boxix(pos)).before(el_to_append);	
+    		this.jd_get_jieboxJQ_from_boxix(pos).before(el_to_append);	
     	} else {
     		$(this.jd_base_div_ref).append(el_to_append);
     	}		
@@ -646,154 +710,166 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,options) {
     this.change_alpha($('#jie_data_box'+this_el_id), this.jd_opacity);
     
 	// append, into the jie div, the div for the header and that of the content
-	$('#jie_data_box'+this_el_id).append($("<div class = jdbx_jie_head id=jdbx_jie_head" + this_el_id + ">"))
-	$('#jie_data_box'+this_el_id).append($("<div class = jdbx_jie_content id=jdbx_jie_content" + this_el_id + ">"))
+	$('#jie_data_box'+this_el_id).append($("<div class = jie_head id=jie_head" + this_el_id + ">"))
+	$('#jie_data_box'+this_el_id).append($("<div class = jie_content id=jie_content" + this_el_id + ">"))
 	
 	// append, into the header div, the div for the control button, 
-	$('#jdbx_jie_head'+this_el_id).append($("<div class = jdbx_jie_head_ctr id=jdbx_jie_head_ctr" + this_el_id + ">"))
+	$('#jie_head'+this_el_id).append($("<div class = jie_head_ctr id=jie_head_ctr" + this_el_id + ">"))
 	// append, into the header div, the div for the header text (title). Add custom attributo to control its edition 
-	$('#jdbx_jie_head'+this_el_id).append($("<div class = jdbx_jie_head_content id=jdbx_jie_head_content" + this_el_id + " data_edit_f=0>"))
+	$('#jie_head'+this_el_id).append($("<div class = jie_head_content id=jie_head_content" + this_el_id + " data_edit_f=0>"))
 	// append, into the header div, the div for the delete button
-	$('#jdbx_jie_head'+this_el_id).append($("<div class = jdbx_jie_head_delete id=jdbx_jie_head_delete" + this_el_id + ">"))
+	$('#jie_head'+this_el_id).append($("<div class = jie_head_delete id=jie_head_delete" + this_el_id + ">"))
 		// append, into the header div, the div for the edit button
-	$('#jdbx_jie_head'+this_el_id).append($("<div class = jdbx_jie_head_edit id=jdbx_jie_head_edit" + this_el_id + ">"))
+	$('#jie_head'+this_el_id).append($("<div class = jie_head_edit id=jie_head_edit" + this_el_id + ">"))
 	// append, into the header div, a dummy div to clear both so that te head div has correct height
-	$('#jdbx_jie_head'+this_el_id).append($("<div class = jdbx_jie_head_last id=jdbx_jie_head_last" + this_el_id + ">"))
+	$('#jie_head'+this_el_id).append($("<div class = jie_head_last id=jie_head_last" + this_el_id + ">"))
 	
 	// append, into the div for the header title, a paragraph with the jie title
-	$('#jdbx_jie_head_content'+this_el_id).append($("<p class = jdbx_jie_head_content_p " +
-			"id = jdbx_jie_head_content_p" + this_el_id + ">" + jie.title + "</p>"));
+	$('#jie_head_content'+this_el_id).append($("<p class = jie_head_content_p " +
+			"id = jie_head_content_p" + this_el_id + ">" + jie.title + "</p>"));
 	
 	// assign the action of replacing the paragraph in the jie header content with a text area to edit it
 	// and change the edit button into a check button
-	$("#jdbx_jie_head_edit"+this_el_id).click(function () {
+	$("#jie_head_edit"+this_el_id).click(function () {
 		
-		var edit_f = $('#jdbx_jie_head_content'+this_el_id).attr('data_edit_f')
+		var edit_f = $('#jie_head_content'+this_el_id).attr('data_edit_f')
 		
 		if(edit_f == '0') {
-			$('#jdbx_jie_head_content_p'+this_el_id).replaceWith("<textarea class = jdbx_jie_head_content_e " +
-					"id = jdbx_jie_head_content_e" + this_el_id + ">" + $("#jdbx_jie_head_content_p" + this_el_id).text() + "</textarea>");
-			$('#jdbx_jie_head_edit'+this_el_id).css('background-image','url(icons/check.svg)');
-			$('#jdbx_jie_head_content'+this_el_id).attr('data_edit_f','1')
+			$('#jie_head_content_p'+this_el_id).replaceWith("<textarea class = jie_head_content_e " +
+					"id = jie_head_content_e" + this_el_id + ">" + $("#jie_head_content_p" + this_el_id).text() + "</textarea>");
+			$('#jie_head_edit'+this_el_id).css('background-image','url(icons/check.svg)');
+			$('#jie_head_content'+this_el_id).attr('data_edit_f','1')
 		} else {
 			var this_jie_ix = $("#jie_data_box" + this_el_id).attr('data_jie_ix')
-			var new_title = $("#jdbx_jie_head_content_e" + this_el_id).val();
+			var new_title = $("#jie_head_content_e" + this_el_id).val();
 			
 			// update the jie list
 			WJ_GLOBAL_jie_map.jie_list[this_jie_ix].title = new_title;
 			
 			// update paragraph with the jie title
-            $('#jdbx_jie_head_content_e'+this_el_id).replaceWith("<p class = jdbx_jie_head_content_p " +
-                    "id = jdbx_jie_head_content_p" + this_el_id + ">" + new_title + "</p>");
-            $('#jdbx_jie_head_edit'+this_el_id).css('background-image','url(icons/brush.svg)');
-            $('#jdbx_jie_head_content'+this_el_id).attr('data_edit_f','0')
+            $('#jie_head_content_e'+this_el_id).replaceWith("<p class = jie_head_content_p " +
+                    "id = jie_head_content_p" + this_el_id + ">" + new_title + "</p>");
+            $('#jie_head_edit'+this_el_id).css('background-image','url(icons/brush.svg)');
+            $('#jie_head_content'+this_el_id).attr('data_edit_f','0')
 		}
 			
 	});
 	
 	// assign the action of deleting the jie from the map
-	$("#jdbx_jie_head_delete"+this_el_id).click(function () {
+	$("#jie_head_delete"+this_el_id).click(function () {
 		
 		var this_jie_ix = $("#jie_data_box" + this_el_id).attr('data_jie_ix')
 		
+		options = {layout_f:false, draw_f:true}
+		
 		// update the jie list
-		WJ_GLOBAL_jie_map.remove_jie(this_jie_ix);
+		WJ_GLOBAL_jie_map.remove_jie(this_jie_ix,options);
 		
 		// update paragraph with the jie title
         $('#jie_data_box'+this_el_id).slideUp();
-      
-		
-	});
+ 	});
 	
 	// assign the action of showing/hiding jie contents
-	$("#jdbx_jie_head_ctr"+this_el_id).click(function () {
-		var displayed = $('#jdbx_jie_content'+this_el_id).css('display');
+	$("#jie_head_ctr"+this_el_id).click(function () {
+		var displayed = $('#jie_content'+this_el_id).css('display');
 		if(displayed == 'none') {
-			$('#jdbx_jie_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-down.svg)'});
+			$('#jie_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-down.svg)'});
 		} else {
-			$('#jdbx_jie_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-right.svg)'});
+			$('#jie_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-right.svg)'});
 		}
 		
-		$('#jdbx_jie_content'+this_el_id).slideToggle('show');
+		$('#jie_content'+this_el_id).slideToggle('show');
 	});
 	
 	if(expand_f == 1) {
-		$('#jdbx_jie_content'+this_el_id).slideToggle('show');
+		$('#jie_content'+this_el_id).slideToggle('show');
 	}
 	
 	// append the div in which the bao_data_boxes will be added
-	$('#jdbx_jie_content'+this_el_id).append($("<div class = jdbx_jie_baos id=jdbx_jie_baos" + this_el_id + ">"))
+	$('#jie_content'+this_el_id).append($("<div class = jie_baos id=jie_baos" + this_el_id + ">"))
 	
 	// append all baos
 	this.jd_append_baos(jie_ix,options);
 	
 	// append the "new bao" div
-	$('#jdbx_jie_content'+this_el_id).append($("<div class = jdbx_new_bao_box id=jdbx_new_bao_box" + this_el_id + 
+	$('#jie_content'+this_el_id).append($("<div class = new_bao_box id=new_bao_box" + this_el_id + 
 			" data_jie_ix=" + jie_ix + ">"));
 	// append the ctr div to the new bao div
-	$('#jdbx_new_bao_box'+this_el_id).append($("<div class = jdbx_new_bao_ctr id=jdbx_new_bao_ctr" + this_el_id + ">"))
+	$('#new_bao_box'+this_el_id).append($("<div class = new_bao_ctr id=new_bao_ctr" + this_el_id + ">"))
 	// appen the text to the new bao div
-	$('#jdbx_new_bao_box'+this_el_id).append($("<p class = jdbx_new_bao_box_text_content_p " +
-			"id = jdbx_new_bao_box_text_content_p" + this_el_id + ">add new bao</p>"));
+	$('#new_bao_box'+this_el_id).append($("<p class = new_bao_box_text_content_p " +
+			"id = new_bao_box_text_content_p" + this_el_id + ">add new bao</p>"));
 	
 	// assign the action of adding a bao when clicking on the new bao button
-	$('#jdbx_new_bao_box'+this_el_id).click(function () {
+	$('#new_bao_box'+this_el_id).click(function () {
 		
 		var data_jie_ix = $(this).attr('data_jie_ix');
 		var bao_id = WJ_GLOBAL_jie_map.get_new_bao_id();
 		var new_bao = new BaoObj(bao_id);
 		
 		jd_options = {edit_on_f:true,expand_f:true};
+		map_options = {layout_force_f:true,draw_f:true}
 		
 		// add bao to the jie map
-		var bao_ix = WJ_GLOBAL_jie_map.add_bao(new_bao,data_jie_ix,jd_options);
-		
-		WJ_GLOBAL_jie_map.layout_force();
-		WJ_GLOBAL_jie_map.draw();
-		
+		var bao_ix = WJ_GLOBAL_jie_map.add_bao(new_bao,data_jie_ix,map_options,jd_options);
 	});
 	
 	// append, into the div for jie content, a div with metadata of the jie (current data is only the description)
-	$('#jdbx_jie_content'+this_el_id).append($("<div class = jdbx_jie_metadata id=jdbx_jie_metadata" + this_el_id + ">"))
+	$('#jie_content'+this_el_id).append($("<div class = jie_metadata id=jie_metadata" + this_el_id + ">"))
 
 	// append, into the div for jie metadata, a div with the description of the jie and its edition button
-	$('#jdbx_jie_metadata'+this_el_id).append($("<div class = jdbx_jie_desc id=jdbx_jie_desc" + this_el_id + " data_edit_f=0>"))
-	$('#jdbx_jie_metadata'+this_el_id).append($("<div class = jdbx_jie_desc_edit id=jdbx_jie_desc_edit" + this_el_id + ">"))
+	$('#jie_metadata'+this_el_id).append($("<div class = jie_desc id=jie_desc" + this_el_id + " data_edit_f=0>"))
+	$('#jie_metadata'+this_el_id).append($("<div class = jie_desc_edit id=jie_desc_edit" + this_el_id + ">"))
 	// append, into the metadata div, a dummy div to clear both so that the metadata div has correct height
-	$('#jdbx_jie_metadata'+this_el_id).append($("<div class = jdbx_jie_metadata_last id=jdbx_jie_metadata_last" + this_el_id + ">"))
+	$('#jie_metadata'+this_el_id).append($("<div class = jie_metadata_last id=jie_metadata_last" + this_el_id + ">"))
 	
 	// add a paragraph with a description of the jie to the description div
-	$('#jdbx_jie_desc'+this_el_id).append($("<p class = jdbx_jie_desc_p " +
-			"id = jdbx_jie_desc_p" + this_el_id + ">" + jie.desc + "</p>"));
+	$('#jie_desc'+this_el_id).append($("<p class = jie_desc_p " +
+			"id = jie_desc_p" + this_el_id + ">" + jie.desc + "</p>"));
 
 	// assign the action of replacing the paragraph in the jie description content with a text area to edit it
 	// and change the edit button into a check button
-	$("#jdbx_jie_desc_edit"+this_el_id).click(function () {
+	$("#jie_desc_edit"+this_el_id).click(function () {
 
-		var edit_f = $('#jdbx_jie_desc'+this_el_id).attr('data_edit_f')
+		var edit_f = $('#jie_desc'+this_el_id).attr('data_edit_f')
 		
 		if(edit_f == '0') {
-			$('#jdbx_jie_desc_p'+this_el_id).replaceWith("<textarea class = jdbx_jie_desc_e " +
-					"id = jdbx_jie_desc_e" + this_el_id + ">" + $("#jdbx_jie_desc_p" + this_el_id).text() + "</textarea>");
-			$('#jdbx_jie_desc_edit'+this_el_id).css('background-image','url(icons/check.svg)');
-			$('#jdbx_jie_desc'+this_el_id).attr('data_edit_f','1')
+			$('#jie_desc_p'+this_el_id).replaceWith("<textarea class = jie_desc_e " +
+					"id = jie_desc_e" + this_el_id + ">" + $("#jie_desc_p" + this_el_id).text() + "</textarea>");
+			$('#jie_desc_edit'+this_el_id).css('background-image','url(icons/check.svg)');
+			$('#jie_desc'+this_el_id).attr('data_edit_f','1')
 		} else {
 			var this_jie_ix = $("#jie_data_box" + this_el_id).attr('data_jie_ix')
-			var new_desc = $("#jdbx_jie_desc_e" + this_el_id).val() ;
+			var new_desc = $("#jie_desc_e" + this_el_id).val() ;
 			
 			// update the jie list
 			WJ_GLOBAL_jie_map.jie_list[this_jie_ix].desc = new_desc;
 			
 			// update paragraph with the bao desc
-            $('#jdbx_jie_desc_e'+this_el_id).replaceWith("<p class = jdbx_jie_desc_p " +
-					"id = jdbx_jie_desc_p" + this_el_id + ">" + new_desc + "</p>");
-            $('#jdbx_jie_desc_edit'+this_el_id).css('background-image','url(icons/brush.svg)');
-            $('#jdbx_jie_desc'+this_el_id).attr('data_edit_f','0')
+            $('#jie_desc_e'+this_el_id).replaceWith("<p class = jie_desc_p " +
+					"id = jie_desc_p" + this_el_id + ">" + new_desc + "</p>");
+            $('#jie_desc_edit'+this_el_id).css('background-image','url(icons/brush.svg)');
+            $('#jie_desc'+this_el_id).attr('data_edit_f','0')
 		}
 			
 	});
 	
 };
+
+Wj_Jie_Map.prototype.jd_update_baos = function(jie_ix,options) {
+	this.jd_remove_baos(jie_ix);
+	this.jd_append_baos(jie_ix);
+}
+
+Wj_Jie_Map.prototype.jd_remove_baos = function(jie_ix,options) {
+	
+	var childs = $('#jie_baos'+jie_ix).children();
+	
+	for (var childix = 0; childix < childs.length; childix++) {
+		// append each bao
+		$(childs[childix]).remove();
+	}
+}
 
 Wj_Jie_Map.prototype.jd_append_baos = function(jie_ix,options) {
 	
@@ -821,93 +897,108 @@ Wj_Jie_Map.prototype.jd_append_bao = function(jie_ix,bao_ix,options) {
 	var this_el_id = jie_ix + "_" + bao_ix;
 
 	// baos container id is standard
-	jdbx_jie_baos_ref = "#jdbx_jie_baos"+jie_ix;
+	jie_baos_ref = "#jie_baos"+jie_ix;
 	
 	// append the div in which this bao data will be added. Store the jie index and the bao index as attributes
-	var el_to_append =  $("<div class = jdbx_bao_data_box id=jdbx_bao_data_box" + this_el_id + 
+	var el_to_append =  $("<div class = bao_data_box id=bao_data_box" + this_el_id + 
 			" data_jie_ix = " + jie_ix + " data_bao_ix = " + bao_ix + "/>");
 	
-	$(jdbx_jie_baos_ref).append(el_to_append);
+	$(jie_baos_ref).append(el_to_append);
 	
 	// append, into the bao div, the div for the header and that of the content
-	$('#jdbx_bao_data_box'+this_el_id).append($("<div class = jdbx_bao_head id=jdbx_bao_head" + this_el_id + ">"));
-	$('#jdbx_bao_data_box'+this_el_id).append($("<div class = jdbx_bao_content id=jdbx_bao_content" + this_el_id + ">"));
+	$('#bao_data_box'+this_el_id).append($("<div class = bao_head id=bao_head" + this_el_id + ">"));
+	$('#bao_data_box'+this_el_id).append($("<div class = bao_content id=bao_content" + this_el_id + ">"));
 	
 	// append, into the header div, the div for the control button,
-	$('#jdbx_bao_head'+this_el_id).append($("<div class = jdbx_bao_head_ctr id=jdbx_bao_head_ctr" + this_el_id + ">"))
+	$('#bao_head'+this_el_id).append($("<div class = bao_head_ctr id=bao_head_ctr" + this_el_id + ">"))
 	// append, into the header div, the div for the header text (title). Add custom attribute to control its edition 
-	$('#jdbx_bao_head'+this_el_id).append($("<div class = jdbx_bao_head_content id=jdbx_bao_head_content" + this_el_id + " data_edit_f=0>"))
-	// append, into the header div, and the div for the edit button
-	$('#jdbx_bao_head'+this_el_id).append($("<div class = jdbx_bao_head_edit id=jdbx_bao_head_edit" + this_el_id + ">"))
+	$('#bao_head'+this_el_id).append($("<div class = bao_head_content id=bao_head_content" + this_el_id + " data_edit_f=0>"))
+	// append, into the header div, and the div for the delete button
+	$('#bao_head'+this_el_id).append($("<div class = bao_head_delete id=bao_head_delete" + this_el_id + ">"))
+	// append, into the header div, the div for the edit button
+	$('#bao_head'+this_el_id).append($("<div class = bao_head_edit id=bao_head_edit" + this_el_id + ">"))
 	// append, into the header div, a dummy div to clear both so that te head div has correct height
-	$('#jdbx_bao_head'+this_el_id).append($("<div class = jdbx_bao_head_last id=jdbx_bao_head_last" + this_el_id + ">"))
+	$('#bao_head'+this_el_id).append($("<div class = bao_head_last id=bao_head_last" + this_el_id + ">"))
 	
 	
 	// append, into the div for the header title, a paragraph with the bao title
-	$('#jdbx_bao_head_content'+this_el_id).append($("<p class = jdbx_bao_head_content_p " +
-			"id=jdbx_bao_head_content_p" + this_el_id + ">" + bao.title + "</p>"));
+	$('#bao_head_content'+this_el_id).append($("<p class = bao_head_content_p " +
+			"id=bao_head_content_p" + this_el_id + ">" + bao.title + "</p>"));
 			
 	// assign the action of replacing the paragraph in the bao header content with a text area to edit it
 	// and change the edit button into a check button
-	$("#jdbx_bao_head_edit"+this_el_id).click(function () {
+	$("#bao_head_edit"+this_el_id).click(function () {
 		
-		var edit_f = $('#jdbx_bao_head_content'+this_el_id).attr('data_edit_f')
+		var edit_f = $('#bao_head_content'+this_el_id).attr('data_edit_f')
 		
 		if(edit_f == '0') {
-			$('#jdbx_bao_head_content_p'+this_el_id).replaceWith("<textarea class = jdbx_bao_head_content_e " +
-					"id = jdbx_bao_head_content_e" + this_el_id + ">" + $("#jdbx_bao_head_content_p" + this_el_id).text() + "</textarea>");
-			$('#jdbx_bao_head_edit'+this_el_id).css('background-image','url(icons/check.svg)');
-			$('#jdbx_bao_head_content'+this_el_id).attr('data_edit_f','1');
+			$('#bao_head_content_p'+this_el_id).replaceWith("<textarea class = bao_head_content_e " +
+					"id = bao_head_content_e" + this_el_id + ">" + $("#bao_head_content_p" + this_el_id).text() + "</textarea>");
+			$('#bao_head_edit'+this_el_id).css('background-image','url(icons/check.svg)');
+			$('#bao_head_content'+this_el_id).attr('data_edit_f','1');
 		} else {
-			var this_jie_ix = $("#jdbx_bao_data_box" + this_el_id).attr('data_jie_ix');
-			var this_bao_ix = $("#jdbx_bao_data_box" + this_el_id).attr('data_bao_ix');
-			var new_title = $("#jdbx_bao_head_content_e" + this_el_id).val();
+			var this_jie_ix = $("#bao_data_box" + this_el_id).attr('data_jie_ix');
+			var this_bao_ix = $("#bao_data_box" + this_el_id).attr('data_bao_ix');
+			var new_title = $("#bao_head_content_e" + this_el_id).val();
 			
 			// update the jie list
 			WJ_GLOBAL_jie_map.jie_list[this_jie_ix].baos[this_bao_ix].title = new_title;
 			
 			// update paragraph with the jie title
-            $('#jdbx_bao_head_content_e'+this_el_id).replaceWith("<p class = jdbx_bao_head_content_p " +
-                    "id = jdbx_bao_head_content_p" + this_el_id + ">" + new_title + "</p>");
-            $('#jdbx_bao_head_edit'+this_el_id).css('background-image','url(icons/brush.svg)');
-            $('#jdbx_bao_head_content'+this_el_id).attr('data_edit_f','0')
+            $('#bao_head_content_e'+this_el_id).replaceWith("<p class = bao_head_content_p " +
+                    "id = bao_head_content_p" + this_el_id + ">" + new_title + "</p>");
+            $('#bao_head_edit'+this_el_id).css('background-image','url(icons/brush.svg)');
+            $('#bao_head_content'+this_el_id).attr('data_edit_f','0')
 		}
 			
+	});
+	
+	// assign the action of deleting the jie from the map
+	$("#bao_head_delete"+this_el_id).click(function () {
+		
+		var this_jie_ix = $("#bao_data_box" + this_el_id).attr('data_jie_ix')
+		var this_bao_ix = $("#bao_data_box" + this_el_id).attr('data_bao_ix');
+		
+		options = {layout_f:false, draw_f:true}
+		
+		// update the jie list
+		WJ_GLOBAL_jie_map.remove_bao_of_jie(this_jie_ix,this_bao_ix,options);
+		
 	});
 	
 	// assign the action of toggling bao content div to the control button in the header
-	$("#jdbx_bao_head_ctr"+this_el_id).click(function () {
-		var displayed = $('#jdbx_bao_content'+this_el_id).css('display');
+	$("#bao_head_ctr"+this_el_id).click(function () {
+		var displayed = $('#bao_content'+this_el_id).css('display');
 		if(displayed == 'none') {
-			$('#jdbx_bao_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-down.svg)'});
+			$('#bao_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-down.svg)'});
 		} else {
-			$('#jdbx_bao_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-right.svg)'});
+			$('#bao_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-right.svg)'});
 		}
 			
-		$('#jdbx_bao_content'+this_el_id).slideToggle('show');
+		$('#bao_content'+this_el_id).slideToggle('show');
 	});
 	
 	if(expand_f == 1) {
-		$('#jdbx_bao_content'+this_el_id).slideToggle('show');
+		$('#bao_content'+this_el_id).slideToggle('show');
 	}
 	
 	// append the div in which the url_data_box will be added
-	$('#jdbx_bao_content'+this_el_id).append($("<div class = jdbx_bao_urls id=jdbx_bao_urls" + this_el_id + ">"))
+	$('#bao_content'+this_el_id).append($("<div class = bao_urls id=bao_urls" + this_el_id + ">"))
 	
 	// append all urls
 	this.jd_append_urls(jie_ix,bao_ix,options);
 	
 	// append the "new url" division
-	$('#jdbx_bao_content'+this_el_id).append($("<div class = jdbx_new_url_box id=jdbx_new_url_box" + this_el_id + 
+	$('#bao_content'+this_el_id).append($("<div class = new_url_box id=new_url_box" + this_el_id + 
 			" data_jie_ix=" + jie_ix + " data_bao_ix=" + bao_ix + ">"));
 	// append the ctr div to the new bao div
-	$('#jdbx_new_url_box'+this_el_id).append($("<div class = jdbx_new_url_ctr id=jdbx_new_url_ctr" + this_el_id + ">"))
+	$('#new_url_box'+this_el_id).append($("<div class = new_url_ctr id=new_url_ctr" + this_el_id + ">"))
 	// appen the text to the new bao div
-	$('#jdbx_new_url_box'+this_el_id).append($("<p class = jdbx_new_url_box_text_content_p " +
-			"id = jdbx_new_url_box_text_content_p" + this_el_id + ">add new url</p>"));
+	$('#new_url_box'+this_el_id).append($("<p class = new_url_box_text_content_p " +
+			"id = new_url_box_text_content_p" + this_el_id + ">add new url</p>"));
 	
 	// assign the action of adding a bao when clicking on the new bao button
-	$('#jdbx_new_url_box'+this_el_id).click(function () {
+	$('#new_url_box'+this_el_id).click(function () {
 		
 		var data_jie_ix = $(this).attr('data_jie_ix');
 		var data_bao_ix = $(this).attr('data_bao_ix');
@@ -917,54 +1008,52 @@ Wj_Jie_Map.prototype.jd_append_bao = function(jie_ix,bao_ix,options) {
 		var new_url = new UrlObj(url_id);
 		
 		jd_options = {edit_on_f:true,expand_f:true};
+		map_options = {layout_force_f:false,draw_f:true}
 		
 		// add bao to the jie map
-		var url_ix = WJ_GLOBAL_jie_map.add_url(new_url,data_jie_ix,data_bao_ix,jd_options);
-
-		WJ_GLOBAL_jie_map.layout_force();
-		WJ_GLOBAL_jie_map.draw();
+		var url_ix = WJ_GLOBAL_jie_map.add_url(new_url,data_jie_ix,data_bao_ix,map_options,jd_options);
 		
 	});
 	
 	// append, into the div for bao content, a div with metadata of the bao (current data is only the description)
-	$('#jdbx_bao_content'+this_el_id).append($("<div class = jdbx_bao_metadata id=jdbx_bao_metadata" + this_el_id + ">"))
+	$('#bao_content'+this_el_id).append($("<div class = bao_metadata id=bao_metadata" + this_el_id + ">"))
 
 	// append, into the div for bao content, a div with a description of the bao (still TBD what a "description" is)
-	$('#jdbx_bao_metadata'+this_el_id).append($("<div class = jdbx_bao_desc id=jdbx_bao_desc" + this_el_id  + " data_edit_f=0>"))
-	$('#jdbx_bao_metadata'+this_el_id).append($("<div class = jdbx_bao_desc_edit id=jdbx_bao_desc_edit" + this_el_id + ">"))
+	$('#bao_metadata'+this_el_id).append($("<div class = bao_desc id=bao_desc" + this_el_id  + " data_edit_f=0>"))
+	$('#bao_metadata'+this_el_id).append($("<div class = bao_desc_edit id=bao_desc_edit" + this_el_id + ">"))
 	// append, into the metadata div, a dummy div to clear both so that the metadata div has correct height
-	$('#jdbx_bao_metadata'+this_el_id).append($("<div class = jdbx_bao_metadata_last id=jdbx_bao_metadata_last" + this_el_id + ">"))
+	$('#bao_metadata'+this_el_id).append($("<div class = bao_metadata_last id=bao_metadata_last" + this_el_id + ">"))
 	
 	
 	// add a paragraph with a description of the bao to the description div
-	$('#jdbx_bao_desc'+this_el_id).append($("<p class = jdbx_bao_desc_p " +
-			"id=jdbx_bao_desc_p" + this_el_id + ">" + bao.desc + "</p>"));
+	$('#bao_desc'+this_el_id).append($("<p class = bao_desc_p " +
+			"id=bao_desc_p" + this_el_id + ">" + bao.desc + "</p>"));
 
 	
 	// assign the action of replacing the paragraph in the bao description content with a text area to edit it
 	// and change the edit button into a check button
-	$("#jdbx_bao_desc_edit"+this_el_id).click(function () {
+	$("#bao_desc_edit"+this_el_id).click(function () {
 
-		var edit_f = $('#jdbx_bao_desc'+this_el_id).attr('data_edit_f')
+		var edit_f = $('#bao_desc'+this_el_id).attr('data_edit_f')
 		
 		if(edit_f == '0') {
-			$('#jdbx_bao_desc_p'+this_el_id).replaceWith("<textarea class = jdbx_bao_desc_e " +
-					"id = jdbx_bao_desc_e" + this_el_id + ">" + $("#jdbx_bao_desc_p" + this_el_id).text() + "</textarea>");
-			$('#jdbx_bao_desc_edit'+this_el_id).css('background-image','url(icons/check.svg)');
-			$('#jdbx_bao_desc'+this_el_id).attr('data_edit_f','1')
+			$('#bao_desc_p'+this_el_id).replaceWith("<textarea class = bao_desc_e " +
+					"id = bao_desc_e" + this_el_id + ">" + $("#bao_desc_p" + this_el_id).text() + "</textarea>");
+			$('#bao_desc_edit'+this_el_id).css('background-image','url(icons/check.svg)');
+			$('#bao_desc'+this_el_id).attr('data_edit_f','1')
 		} else {
-			var this_jie_ix = $("#jdbx_bao_data_box" + this_el_id).attr('data_jie_ix');
-			var this_bao_ix = $("#jdbx_bao_data_box" + this_el_id).attr('data_bao_ix');
-			var new_desc = $("#jdbx_bao_desc_e" + this_el_id).val() ;
+			var this_jie_ix = $("#bao_data_box" + this_el_id).attr('data_jie_ix');
+			var this_bao_ix = $("#bao_data_box" + this_el_id).attr('data_bao_ix');
+			var new_desc = $("#bao_desc_e" + this_el_id).val() ;
 			
 			// update the jie list
 			WJ_GLOBAL_jie_map.jie_list[this_jie_ix].baos[this_bao_ix].desc = new_desc;
 			
 			// update paragraph with the bao desc
-            $('#jdbx_bao_desc_e'+this_el_id).replaceWith("<p class = jdbx_bao_desc_p " +
-					"id = jdbx_bao_desc_p" + this_el_id + ">" + new_desc + "</p>");
-            $('#jdbx_bao_desc_edit'+this_el_id).css('background-image','url(icons/brush.svg)');
-            $('#jdbx_bao_desc'+this_el_id).attr('data_edit_f','0')
+            $('#bao_desc_e'+this_el_id).replaceWith("<p class = bao_desc_p " +
+					"id = bao_desc_p" + this_el_id + ">" + new_desc + "</p>");
+            $('#bao_desc_edit'+this_el_id).css('background-image','url(icons/brush.svg)');
+            $('#bao_desc'+this_el_id).attr('data_edit_f','0')
 		}
 			
 	});
@@ -997,127 +1086,127 @@ Wj_Jie_Map.prototype.jd_append_url = function(jie_ix,bao_ix,url_ix,options) {
 	var this_el_id = jie_ix + "_" + bao_ix + "_" + url_ix;
 	
 	// baos container id is standard
-	jdbx_bao_urls_ref = "#jdbx_bao_urls"+jie_ix+"_"+bao_ix;
+	bao_urls_ref = "#bao_urls"+jie_ix+"_"+bao_ix;
 
-	var el_to_append = $("<div class = jdbx_url_data_box id=jdbx_url_data_box" + this_el_id + 
+	var el_to_append = $("<div class = url_data_box id=url_data_box" + this_el_id + 
 			" data_jie_ix = " + jie_ix + " data_bao_ix = " + bao_ix + " data_url_ix = " + url_ix + "/>");
 	
-	$(jdbx_bao_urls_ref).append(el_to_append);
+	$(bao_urls_ref).append(el_to_append);
 
 	// append, into the url div, the div for the header and that of the content
-	$('#jdbx_url_data_box'+this_el_id).append($("<div class = jdbx_url_head id=jdbx_url_head" + this_el_id + ">"));
-	$('#jdbx_url_data_box'+this_el_id).append($("<div class = jdbx_url_content id=jdbx_url_content" + this_el_id + ">"));
+	$('#url_data_box'+this_el_id).append($("<div class = url_head id=url_head" + this_el_id + ">"));
+	$('#url_data_box'+this_el_id).append($("<div class = url_content id=url_content" + this_el_id + ">"));
 	
 	// append, into the header div, the div for the control button,
-	$('#jdbx_url_head'+this_el_id).append($("<div class = jdbx_url_head_ctr id=jdbx_url_head_ctr" + this_el_id + ">"))
+	$('#url_head'+this_el_id).append($("<div class = url_head_ctr id=url_head_ctr" + this_el_id + ">"))
 	// append, into the header div, the div for the header text (title). Add custom attribute to control its edition 
-	$('#jdbx_url_head'+this_el_id).append($("<div class = jdbx_url_head_content id=jdbx_url_head_content" + this_el_id + " data_edit_f=0>"))
+	$('#url_head'+this_el_id).append($("<div class = url_head_content id=url_head_content" + this_el_id + " data_edit_f=0>"))
 	// append, into the header div, and the div for the edit button
-	$('#jdbx_url_head'+this_el_id).append($("<div class = jdbx_url_head_edit id=jdbx_url_head_edit" + this_el_id + ">"))
+	$('#url_head'+this_el_id).append($("<div class = url_head_edit id=url_head_edit" + this_el_id + ">"))
 	// append, into the header div, a dummy div to clear both so that te head div has correct height
-	$('#jdbx_url_head'+this_el_id).append($("<div class = jdbx_url_head_last id=jdbx_url_head_last" + this_el_id + ">"))
+	$('#url_head'+this_el_id).append($("<div class = url_head_last id=url_head_last" + this_el_id + ">"))
 	
 	
 	// append, into the div for the header title, a paragraph with the url title
-	$('#jdbx_url_head_content'+this_el_id).append($("<a href = " + url.url + " target='_blank' " + 
-			" class = jdbx_url_head_content_href " + "id=jdbx_url_head_content_href" + this_el_id + ">" + url.title + "</a>"));
+	$('#url_head_content'+this_el_id).append($("<a href = " + url.url + " target='_blank' " + 
+			" class = url_head_content_href " + "id=url_head_content_href" + this_el_id + ">" + url.title + "</a>"));
 	
 			
 	// assign the action of replacing the paragraph in the url header content with a text area to edit it
 	// and change the edit button into a check button
-	$("#jdbx_url_head_edit"+this_el_id).click(function () {
+	$("#url_head_edit"+this_el_id).click(function () {
 		
-		var edit_f = $('#jdbx_url_head_content'+this_el_id).attr('data_edit_f')
+		var edit_f = $('#url_head_content'+this_el_id).attr('data_edit_f')
 		
 		if(edit_f == '0') {
-			$('#jdbx_url_head_content_href'+this_el_id).replaceWith("<textarea class = jdbx_url_head_content_e " +
-					"id = jdbx_url_head_content_e" + this_el_id + ">" + $("#jdbx_url_head_content_href" + this_el_id).attr('href') + "</textarea>");
-			$('#jdbx_url_head_edit'+this_el_id).css('background-image','url(icons/check.svg)');
-			$('#jdbx_url_head_content'+this_el_id).attr('data_edit_f','1');
+			$('#url_head_content_href'+this_el_id).replaceWith("<textarea class = url_head_content_e " +
+					"id = url_head_content_e" + this_el_id + ">" + $("#url_head_content_href" + this_el_id).attr('href') + "</textarea>");
+			$('#url_head_edit'+this_el_id).css('background-image','url(icons/check.svg)');
+			$('#url_head_content'+this_el_id).attr('data_edit_f','1');
 		} else {
-			var this_jie_ix = $("#jdbx_url_data_box" + this_el_id).attr('data_jie_ix');
-			var this_bao_ix = $("#jdbx_url_data_box" + this_el_id).attr('data_bao_ix');
-			var this_url_ix = $("#jdbx_url_data_box" + this_el_id).attr('data_url_ix');
+			var this_jie_ix = $("#url_data_box" + this_el_id).attr('data_jie_ix');
+			var this_bao_ix = $("#url_data_box" + this_el_id).attr('data_bao_ix');
+			var this_url_ix = $("#url_data_box" + this_el_id).attr('data_url_ix');
 			
-			var new_href = $("#jdbx_url_head_content_e" + this_el_id).val();
+			var new_href = $("#url_head_content_e" + this_el_id).val();
 			
 			// update the jie list
 			WJ_GLOBAL_jie_map.jie_list[this_jie_ix].baos[this_bao_ix].urls[this_url_ix].url = new_href;
 			WJ_GLOBAL_jie_map.jie_list[this_jie_ix].baos[this_bao_ix].urls[this_url_ix].title = new_href;
 			
 			// update paragraph with the url
-            $('#jdbx_url_head_content_e'+this_el_id).replaceWith($("<a href = " + new_href + " target='_blank' " + 
-        			" class = jdbx_url_head_content_href " + "id=jdbx_url_head_content_href" + this_el_id + ">" + url.title + "</a>"));
-            $('#jdbx_url_head_edit'+this_el_id).css('background-image','url(icons/brush.svg)');
-            $('#jdbx_url_head_content'+this_el_id).attr('data_edit_f','0')
+            $('#url_head_content_e'+this_el_id).replaceWith($("<a href = " + new_href + " target='_blank' " + 
+        			" class = url_head_content_href " + "id=url_head_content_href" + this_el_id + ">" + url.title + "</a>"));
+            $('#url_head_edit'+this_el_id).css('background-image','url(icons/brush.svg)');
+            $('#url_head_content'+this_el_id).attr('data_edit_f','0')
 		}
 			
 	});
 
 	if(edit_on_f) {
-		$("#jdbx_url_head_edit"+this_el_id).trigger('click');
+		$("#url_head_edit"+this_el_id).trigger('click');
 	}	
 	
 	// append, into the div for url content, a div with metadata of the url (current data is only the description)
-	$('#jdbx_url_content'+this_el_id).append($("<div class = jdbx_url_metadata id=jdbx_url_metadata" + this_el_id + ">"))
+	$('#url_content'+this_el_id).append($("<div class = url_metadata id=url_metadata" + this_el_id + ">"))
 
 	
 	// append, into the div for url content, a div with a description of the url
-	$('#jdbx_url_metadata'+this_el_id).append($("<div class = jdbx_url_desc id=jdbx_url_desc" + this_el_id  + " data_edit_f=0>"))
-	$('#jdbx_url_metadata'+this_el_id).append($("<div class = jdbx_url_desc_edit id=jdbx_url_desc_edit" + this_el_id + ">"))
+	$('#url_metadata'+this_el_id).append($("<div class = url_desc id=url_desc" + this_el_id  + " data_edit_f=0>"))
+	$('#url_metadata'+this_el_id).append($("<div class = url_desc_edit id=url_desc_edit" + this_el_id + ">"))
 	// append, into the metadata div, a dummy div to clear both so that the metadata div has correct height
-	$('#jdbx_url_metadata'+this_el_id).append($("<div class = jdbx_url_metadata_last id=jdbx_url_metadata_last" + this_el_id + ">"))
+	$('#url_metadata'+this_el_id).append($("<div class = url_metadata_last id=url_metadata_last" + this_el_id + ">"))
 	
 	// add a paragraph with a description of the url to the description div
-	$('#jdbx_url_desc'+this_el_id).append($("<p class = jdbx_url_desc_p " +
-			"id=jdbx_url_desc_p" + this_el_id + ">" + url.desc + "</p>"));
+	$('#url_desc'+this_el_id).append($("<p class = url_desc_p " +
+			"id=url_desc_p" + this_el_id + ">" + url.desc + "</p>"));
 	
 	
 	// assign the action of replacing the paragraph in the url description content with a text area to edit it
 	// and change the edit button into a check button
-	$("#jdbx_url_desc_edit"+this_el_id).click(function () {
+	$("#url_desc_edit"+this_el_id).click(function () {
 
-		var edit_f = $('#jdbx_url_desc'+this_el_id).attr('data_edit_f')
+		var edit_f = $('#url_desc'+this_el_id).attr('data_edit_f')
 		
 		if(edit_f == '0') {
-			$('#jdbx_url_desc_p'+this_el_id).replaceWith("<textarea class = jdbx_url_desc_e " +
-					"id = jdbx_url_desc_e" + this_el_id + ">" + $("#jdbx_url_desc_p" + this_el_id).text() + "</textarea>");
-			$('#jdbx_url_desc_edit'+this_el_id).css('background-image','url(icons/check.svg)');
-			$('#jdbx_url_desc'+this_el_id).attr('data_edit_f','1')
+			$('#url_desc_p'+this_el_id).replaceWith("<textarea class = url_desc_e " +
+					"id = url_desc_e" + this_el_id + ">" + $("#url_desc_p" + this_el_id).text() + "</textarea>");
+			$('#url_desc_edit'+this_el_id).css('background-image','url(icons/check.svg)');
+			$('#url_desc'+this_el_id).attr('data_edit_f','1')
 		} else {
-			var this_jie_ix = $("#jdbx_url_data_box" + this_el_id).attr('data_jie_ix');
-			var this_bao_ix = $("#jdbx_bao_data_box" + this_el_id).attr('data_bao_ix');
-			var this_url_ix = $("#jdbx_url_data_box" + this_el_id).attr('data_url_ix');
+			var this_jie_ix = $("#url_data_box" + this_el_id).attr('data_jie_ix');
+			var this_bao_ix = $("#bao_data_box" + this_el_id).attr('data_bao_ix');
+			var this_url_ix = $("#url_data_box" + this_el_id).attr('data_url_ix');
 			
-			var new_desc = $("#jdbx_url_desc_e" + this_el_id).val() ;
+			var new_desc = $("#url_desc_e" + this_el_id).val() ;
 			
 			// update the jie list
 			WJ_GLOBAL_jie_map.jie_list[this_jie_ix].baos[bao_ix].urls[this_url_ix].desc = new_desc;
 			
 			// update paragraph with the url desc
-            $('#jdbx_url_desc_e'+this_el_id).replaceWith("<p class = jdbx_url_desc_p " +
-					"id = jdbx_url_desc_p" + this_el_id + ">" + new_desc + "</p>");
-            $('#jdbx_url_desc_edit'+this_el_id).css('background-image','url(icons/brush.svg)');
-            $('#jdbx_url_desc'+this_el_id).attr('data_edit_f','0')
+            $('#url_desc_e'+this_el_id).replaceWith("<p class = url_desc_p " +
+					"id = url_desc_p" + this_el_id + ">" + new_desc + "</p>");
+            $('#url_desc_edit'+this_el_id).css('background-image','url(icons/brush.svg)');
+            $('#url_desc'+this_el_id).attr('data_edit_f','0')
 		}
 			
 	});
 	
 	
 	// assign the action of toggling url content div to the control button in the header
-	$("#jdbx_url_head_ctr"+this_el_id).click(function () {
-		var displayed = $('#jdbx_url_content'+this_el_id).css('display');
+	$("#url_head_ctr"+this_el_id).click(function () {
+		var displayed = $('#url_content'+this_el_id).css('display');
 		if(displayed == 'none') {
-			$('#jdbx_url_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-down.svg)'});
+			$('#url_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-down.svg)'});
 		} else {
-			$('#jdbx_url_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-right.svg)'});
+			$('#url_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-right.svg)'});
 		}
 		
-		$('#jdbx_url_content'+this_el_id).slideToggle('show');
+		$('#url_content'+this_el_id).slideToggle('show');
 	});
 	
 	if(expand_f == 1) {
-		$('#jdbx_url_content'+this_el_id).slideToggle('show');
+		$('#url_content'+this_el_id).slideToggle('show');
 	}
 	
 };
