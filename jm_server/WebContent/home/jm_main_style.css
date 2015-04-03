@@ -28,17 +28,17 @@ body {
 #top #jie_query {
 	float: left;
 	margin-left: 10px;
-	margin-top: 20px;
+	margin-top: 22px;
 	width: calc(100% - 10px - 10px - 20px - 2px - 2px - 180px - 80px);
 	height:25px;
 }
 
 #top #search_btn {
 	float: left;
-	margin-top: 20px;
+	margin-top: 22px;
 	margin-right: 20px;
     width: 80px;
-    height:31px;
+    height:30px;
 }
 
 #bottom {
