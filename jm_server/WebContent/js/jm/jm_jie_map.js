@@ -303,6 +303,29 @@ Wj_Jie_Map.prototype.add_url = function(url,jie_ix,bao_ix,map_options,jd_options
 	return url_ix;
 };
 
+Wj_Jie_Map.prototype.remove_url_of_bao = function(jie_ix,bao_ix,url_ix,map_options) {
+	
+	map_options = map_options || {layout_force_f:false,draw_f:false}
+		
+	// do not show this jie in the map and redraw
+	if(this.jie_list[jie_ix].baos[bao_ix].urls.length > 1) {
+		this.jie_list[jie_ix].baos[bao_ix].urls.splice(url_ix,1);
+		
+		this.jie_graph.update_baos_and_links_from_jie_list(this.jie_list);
+		
+		if(map_options.layout_force_f) {
+			this.layout_force();
+		}
+		
+		if(map_options.draw_f) {
+			this.draw();
+		}
+		
+		// remove bao data box
+		this.jd_update_urls(jie_ix,bao_ix);
+	}
+};
+
 Wj_Jie_Map.prototype.get_new_jie_id = function() {
 
 	var jie_id = 'J' + this.n_new_jies;
@@ -1060,6 +1083,21 @@ Wj_Jie_Map.prototype.jd_append_bao = function(jie_ix,bao_ix,options) {
 
 };
 
+Wj_Jie_Map.prototype.jd_update_urls = function(jie_ix,bao_ix,options) {
+	this.jd_remove_urls(jie_ix,bao_ix);
+	this.jd_append_urls(jie_ix,bao_ix);
+}
+
+Wj_Jie_Map.prototype.jd_remove_urls = function(jie_ix,bao_ix,options) {
+	
+	var childs = $('#bao_urls'+jie_ix+'_'+bao_ix).children();
+	
+	for (var childix = 0; childix < childs.length; childix++) {
+		// append each bao
+		$(childs[childix]).remove();
+	}
+}
+
 Wj_Jie_Map.prototype.jd_append_urls = function(jie_ix,bao_ix,options) {
 	
 	var jie = this.jie_list[jie_ix];
@@ -1101,6 +1139,8 @@ Wj_Jie_Map.prototype.jd_append_url = function(jie_ix,bao_ix,url_ix,options) {
 	$('#url_head'+this_el_id).append($("<div class = url_head_ctr id=url_head_ctr" + this_el_id + ">"))
 	// append, into the header div, the div for the header text (title). Add custom attribute to control its edition 
 	$('#url_head'+this_el_id).append($("<div class = url_head_content id=url_head_content" + this_el_id + " data_edit_f=0>"))
+	// append, into the header div, and the div for the delete button
+	$('#url_head'+this_el_id).append($("<div class = url_head_delete id=url_head_delete" + this_el_id + ">"))
 	// append, into the header div, and the div for the edit button
 	$('#url_head'+this_el_id).append($("<div class = url_head_edit id=url_head_edit" + this_el_id + ">"))
 	// append, into the header div, a dummy div to clear both so that te head div has correct height
@@ -1141,6 +1181,32 @@ Wj_Jie_Map.prototype.jd_append_url = function(jie_ix,bao_ix,url_ix,options) {
             $('#url_head_content'+this_el_id).attr('data_edit_f','0')
 		}
 			
+	});
+	
+	// assign the action of deleting the jie from the map
+	$("#url_head_delete"+this_el_id).click(function () {
+		
+		var this_jie_ix = $("#url_data_box" + this_el_id).attr('data_jie_ix')
+		var this_bao_ix = $("#url_data_box" + this_el_id).attr('data_bao_ix');
+		var this_url_ix = $("#url_data_box" + this_el_id).attr('data_url_ix');
+		
+		options = {layout_f:false, draw_f:true}
+		
+		// update the jie list
+		WJ_GLOBAL_jie_map.remove_url_of_bao(this_jie_ix,this_bao_ix,this_url_ix,options);
+		
+	});
+	
+	// assign the action of toggling url content div to the control button in the header
+	$("#url_head_ctr"+this_el_id).click(function () {
+		var displayed = $('#url_content'+this_el_id).css('display');
+		if(displayed == 'none') {
+			$('#url_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-down.svg)'});
+		} else {
+			$('#url_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-right.svg)'});
+		}
+		
+		$('#url_content'+this_el_id).slideToggle('show');
 	});
 
 	if(edit_on_f) {
@@ -1190,19 +1256,6 @@ Wj_Jie_Map.prototype.jd_append_url = function(jie_ix,bao_ix,url_ix,options) {
             $('#url_desc'+this_el_id).attr('data_edit_f','0')
 		}
 			
-	});
-	
-	
-	// assign the action of toggling url content div to the control button in the header
-	$("#url_head_ctr"+this_el_id).click(function () {
-		var displayed = $('#url_content'+this_el_id).css('display');
-		if(displayed == 'none') {
-			$('#url_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-down.svg)'});
-		} else {
-			$('#url_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-right.svg)'});
-		}
-		
-		$('#url_content'+this_el_id).slideToggle('show');
 	});
 	
 	if(expand_f == 1) {
