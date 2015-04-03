@@ -630,13 +630,56 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
 			
 	});
 	
+	// assign the action of showing/hiding jie contents
+	$("#jdbx_jie_head_ctr"+this_el_id).click(function () {
+		$('#jdbx_jie_content'+this_el_id).slideToggle('show');
+	});
+	
+	if(expanded == 1) {
+		$('#jdbx_jie_content'+this_el_id).slideToggle('show');
+	}
+	
+	// append the div in which the bao_data_boxes will be added
+	$('#jdbx_jie_content'+this_el_id).append($("<div class = jdbx_jie_baos id=jdbx_jie_baos" + this_el_id + ">"))
+	
+	// append all baos
+	this.jd_append_baos(jie_ix,expanded);
+	
+	// append the "new bao" div
+	$('#jdbx_jie_content'+this_el_id).append($("<div class = jdbx_new_bao_box id=jdbx_new_bao_box" + this_el_id + 
+			" data_jie_ix=" + jie_ix + ">"));
+	// append the ctr div to the new bao div
+	$('#jdbx_new_bao_box'+this_el_id).append($("<div class = jdbx_new_bao_ctr id=jdbx_new_bao_ctr" + this_el_id + ">"))
+	// appen the text to the new bao div
+	$('#jdbx_new_bao_box'+this_el_id).append($("<p class = jdbx_new_bao_box_text_content_p " +
+			"id = jdbx_new_bao_box_text_content_p" + this_el_id + ">add new bao</p>"));
+	
+	// assign the action of adding a bao when clicking on the new bao button
+	$('#jdbx_new_bao_box'+this_el_id).click(function () {
+		
+		var data_jie_ix = $(this).attr('data_jie_ix');
+				
+		var bao_id = WJ_GLOBAL_jie_map.get_new_bao_id();
+		
+		var new_bao = new BaoObj(bao_id);
+		
+		// add bao to the jie map
+		var bao_ix = WJ_GLOBAL_jie_map.add_bao(new_bao,data_jie_ix);
+		
+		WJ_GLOBAL_jie_map.layout_force();
+		WJ_GLOBAL_jie_map.draw();
+		
+	});
+	
 	// append, into the div for jie content, a div with metadata of the jie (current data is only the description)
 	$('#jdbx_jie_content'+this_el_id).append($("<div class = jdbx_jie_metadata id=jdbx_jie_metadata" + this_el_id + ">"))
 
 	// append, into the div for jie metadata, a div with the description of the jie and its edition button
 	$('#jdbx_jie_metadata'+this_el_id).append($("<div class = jdbx_jie_desc id=jdbx_jie_desc" + this_el_id + " data_edit_f=0>"))
 	$('#jdbx_jie_metadata'+this_el_id).append($("<div class = jdbx_jie_desc_edit id=jdbx_jie_desc_edit" + this_el_id + ">"))
-
+	// append, into the metadata div, a dummy div to clear both so that the metadata div has correct height
+	$('#jdbx_jie_metadata'+this_el_id).append($("<div class = jdbx_jie_metadata_last id=jdbx_jie_metadata_last" + this_el_id + ">"))
+	
 	// add a paragraph with a description of the jie to the description div
 	$('#jdbx_jie_desc'+this_el_id).append($("<p class = jdbx_jie_desc_p " +
 			"id = jdbx_jie_desc_p" + this_el_id + ">" + jie.desc + "</p>"));
@@ -666,48 +709,6 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
             $('#jdbx_jie_desc'+this_el_id).attr('data_edit_f','0')
 		}
 			
-	});
-	
-	// assign the action of showing/hiding jie contents
-	$("#jdbx_jie_head_ctr"+this_el_id).click(function () {
-		$('#jdbx_jie_content'+this_el_id).slideToggle('show');
-	});
-	
-	if(expanded == 1) {
-		$('#jdbx_jie_content'+this_el_id).slideToggle('show');
-	}
-	
-	// append the div in which the bao_data_box will be added
-	$('#jdbx_jie_content'+this_el_id).append($("<div class = jdbx_jie_baos id=jdbx_jie_baos" + this_el_id + ">"))
-	
-	
-	// append all baos
-	this.jd_append_baos(jie_ix,expanded);
-	
-	// append the "new bao" div
-	$('#jdbx_jie_content'+this_el_id).append($("<div class = jdbx_new_bao_box id=jdbx_new_bao_box" + this_el_id + 
-			" data_jie_ix=" + jie_ix + ">"));
-	// append the ctr div to the new bao div
-	$('#jdbx_new_bao_box'+this_el_id).append($("<div class = jdbx_new_bao_ctr id=jdbx_new_bao_ctr" + this_el_id + ">"))
-	// appen the text to the new bao div
-	$('#jdbx_new_bao_box'+this_el_id).append($("<p class = jdbx_new_bao_box_text_content_p " +
-			"id = jdbx_new_bao_box_text_content_p" + this_el_id + ">add new bao</p>"));
-	
-	// assign the action of adding a bao when clicking on the new bao button
-	$('#jdbx_new_bao_box'+this_el_id).click(function () {
-		
-		var data_jie_ix = $(this).attr('data_jie_ix');
-				
-		var bao_id = WJ_GLOBAL_jie_map.get_new_bao_id();
-		
-		var new_bao = new BaoObj(bao_id);
-		
-		// add bao to the jie map
-		var bao_ix = WJ_GLOBAL_jie_map.add_bao(new_bao,data_jie_ix);
-		
-		WJ_GLOBAL_jie_map.layout_force();
-		WJ_GLOBAL_jie_map.draw();
-		
 	});
 	
 };
@@ -788,46 +789,6 @@ Wj_Jie_Map.prototype.jd_append_bao = function(jie_ix,bao_ix,expanded) {
 			
 	});
 	
-	// append, into the div for bao content, a div with metadata of the bao (current data is only the description)
-	$('#jdbx_bao_content'+this_el_id).append($("<div class = jdbx_bao_metadata id=jdbx_bao_metadata" + this_el_id + ">"))
-
-	// append, into the div for bao content, a div with a description of the bao (still TBD what a "description" is)
-	$('#jdbx_bao_metadata'+this_el_id).append($("<div class = jdbx_bao_desc id=jdbx_bao_desc" + this_el_id  + " data_edit_f=0>"))
-	$('#jdbx_bao_metadata'+this_el_id).append($("<div class = jdbx_bao_desc_edit id=jdbx_bao_desc_edit" + this_el_id + ">"))
-	
-	// add a paragraph with a description of the bao to the description div
-	$('#jdbx_bao_desc'+this_el_id).append($("<p class = jdbx_bao_desc_p " +
-			"id=jdbx_bao_desc_p" + this_el_id + ">" + bao.desc + "</p>"));
-
-	
-	// assign the action of replacing the paragraph in the bao description content with a text area to edit it
-	// and change the edit button into a check button
-	$("#jdbx_bao_desc_edit"+this_el_id).click(function () {
-
-		var edit_f = $('#jdbx_bao_desc'+this_el_id).attr('data_edit_f')
-		
-		if(edit_f == '0') {
-			$('#jdbx_bao_desc_p'+this_el_id).replaceWith("<textarea class = jdbx_bao_desc_e " +
-					"id = jdbx_bao_desc_e" + this_el_id + ">" + $("#jdbx_bao_desc_p" + this_el_id).text() + "</textarea>");
-			$('#jdbx_bao_desc_edit'+this_el_id).css('background-image','url(icons/check.svg)');
-			$('#jdbx_bao_desc'+this_el_id).attr('data_edit_f','1')
-		} else {
-			var this_jie_ix = $("#jdbx_bao_data_box" + this_el_id).attr('data_jie_ix');
-			var this_bao_ix = $("#jdbx_bao_data_box" + this_el_id).attr('data_bao_ix');
-			var new_desc = $("#jdbx_bao_desc_e" + this_el_id).val() ;
-			
-			// update the jie list
-			WJ_GLOBAL_jie_map.jie_list[this_jie_ix].baos[this_bao_ix].desc = new_desc;
-			
-			// update paragraph with the bao desc
-            $('#jdbx_bao_desc_e'+this_el_id).replaceWith("<p class = jdbx_bao_desc_p " +
-					"id = jdbx_bao_desc_p" + this_el_id + ">" + new_desc + "</p>");
-            $('#jdbx_bao_desc_edit'+this_el_id).css('background-image','url(icons/brush.svg)');
-            $('#jdbx_bao_desc'+this_el_id).attr('data_edit_f','0')
-		}
-			
-	});
-	
 	// assign the action of toggling bao content div to the control button in the header
 	$("#jdbx_bao_head_ctr"+this_el_id).click(function () {
 			$('#jdbx_bao_content'+this_el_id).slideToggle('show');
@@ -870,6 +831,48 @@ Wj_Jie_Map.prototype.jd_append_bao = function(jie_ix,bao_ix,expanded) {
 		
 	});
 	
+	// append, into the div for bao content, a div with metadata of the bao (current data is only the description)
+	$('#jdbx_bao_content'+this_el_id).append($("<div class = jdbx_bao_metadata id=jdbx_bao_metadata" + this_el_id + ">"))
+
+	// append, into the div for bao content, a div with a description of the bao (still TBD what a "description" is)
+	$('#jdbx_bao_metadata'+this_el_id).append($("<div class = jdbx_bao_desc id=jdbx_bao_desc" + this_el_id  + " data_edit_f=0>"))
+	$('#jdbx_bao_metadata'+this_el_id).append($("<div class = jdbx_bao_desc_edit id=jdbx_bao_desc_edit" + this_el_id + ">"))
+	// append, into the metadata div, a dummy div to clear both so that the metadata div has correct height
+	$('#jdbx_bao_metadata'+this_el_id).append($("<div class = jdbx_bao_metadata_last id=jdbx_bao_metadata_last" + this_el_id + ">"))
+	
+	
+	// add a paragraph with a description of the bao to the description div
+	$('#jdbx_bao_desc'+this_el_id).append($("<p class = jdbx_bao_desc_p " +
+			"id=jdbx_bao_desc_p" + this_el_id + ">" + bao.desc + "</p>"));
+
+	
+	// assign the action of replacing the paragraph in the bao description content with a text area to edit it
+	// and change the edit button into a check button
+	$("#jdbx_bao_desc_edit"+this_el_id).click(function () {
+
+		var edit_f = $('#jdbx_bao_desc'+this_el_id).attr('data_edit_f')
+		
+		if(edit_f == '0') {
+			$('#jdbx_bao_desc_p'+this_el_id).replaceWith("<textarea class = jdbx_bao_desc_e " +
+					"id = jdbx_bao_desc_e" + this_el_id + ">" + $("#jdbx_bao_desc_p" + this_el_id).text() + "</textarea>");
+			$('#jdbx_bao_desc_edit'+this_el_id).css('background-image','url(icons/check.svg)');
+			$('#jdbx_bao_desc'+this_el_id).attr('data_edit_f','1')
+		} else {
+			var this_jie_ix = $("#jdbx_bao_data_box" + this_el_id).attr('data_jie_ix');
+			var this_bao_ix = $("#jdbx_bao_data_box" + this_el_id).attr('data_bao_ix');
+			var new_desc = $("#jdbx_bao_desc_e" + this_el_id).val() ;
+			
+			// update the jie list
+			WJ_GLOBAL_jie_map.jie_list[this_jie_ix].baos[this_bao_ix].desc = new_desc;
+			
+			// update paragraph with the bao desc
+            $('#jdbx_bao_desc_e'+this_el_id).replaceWith("<p class = jdbx_bao_desc_p " +
+					"id = jdbx_bao_desc_p" + this_el_id + ">" + new_desc + "</p>");
+            $('#jdbx_bao_desc_edit'+this_el_id).css('background-image','url(icons/brush.svg)');
+            $('#jdbx_bao_desc'+this_el_id).attr('data_edit_f','0')
+		}
+			
+	});
 
 };
 
@@ -960,6 +963,8 @@ Wj_Jie_Map.prototype.jd_append_url = function(jie_ix,bao_ix,url_ix,expanded) {
 	// append, into the div for url content, a div with a description of the url
 	$('#jdbx_url_metadata'+this_el_id).append($("<div class = jdbx_url_desc id=jdbx_url_desc" + this_el_id  + " data_edit_f=0>"))
 	$('#jdbx_url_metadata'+this_el_id).append($("<div class = jdbx_url_desc_edit id=jdbx_url_desc_edit" + this_el_id + ">"))
+	// append, into the metadata div, a dummy div to clear both so that the metadata div has correct height
+	$('#jdbx_url_metadata'+this_el_id).append($("<div class = jdbx_url_metadata_last id=jdbx_url_metadata_last" + this_el_id + ">"))
 	
 	// add a paragraph with a description of the url to the description div
 	$('#jdbx_url_desc'+this_el_id).append($("<p class = jdbx_url_desc_p " +
