@@ -632,6 +632,13 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
 	
 	// assign the action of showing/hiding jie contents
 	$("#jdbx_jie_head_ctr"+this_el_id).click(function () {
+		var displayed = $('#jdbx_jie_content'+this_el_id).css('display');
+		if(displayed == 'none') {
+			$('#jdbx_jie_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-down.svg)'});
+		} else {
+			$('#jdbx_jie_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-right.svg)'});
+		}
+		
 		$('#jdbx_jie_content'+this_el_id).slideToggle('show');
 	});
 	
@@ -658,9 +665,7 @@ Wj_Jie_Map.prototype.jd_append_jie = function(jie_ix,pos,expanded) {
 	$('#jdbx_new_bao_box'+this_el_id).click(function () {
 		
 		var data_jie_ix = $(this).attr('data_jie_ix');
-				
 		var bao_id = WJ_GLOBAL_jie_map.get_new_bao_id();
-		
 		var new_bao = new BaoObj(bao_id);
 		
 		// add bao to the jie map
@@ -791,7 +796,14 @@ Wj_Jie_Map.prototype.jd_append_bao = function(jie_ix,bao_ix,expanded) {
 	
 	// assign the action of toggling bao content div to the control button in the header
 	$("#jdbx_bao_head_ctr"+this_el_id).click(function () {
-			$('#jdbx_bao_content'+this_el_id).slideToggle('show');
+		var displayed = $('#jdbx_bao_content'+this_el_id).css('display');
+		if(displayed == 'none') {
+			$('#jdbx_bao_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-down.svg)'});
+		} else {
+			$('#jdbx_bao_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-right.svg)'});
+		}
+			
+		$('#jdbx_bao_content'+this_el_id).slideToggle('show');
 	});
 	
 	if(expanded == 1) {
@@ -1004,6 +1016,13 @@ Wj_Jie_Map.prototype.jd_append_url = function(jie_ix,bao_ix,url_ix,expanded) {
 	
 	// assign the action of toggling url content div to the control button in the header
 	$("#jdbx_url_head_ctr"+this_el_id).click(function () {
+		var displayed = $('#jdbx_url_content'+this_el_id).css('display');
+		if(displayed == 'none') {
+			$('#jdbx_url_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-down.svg)'});
+		} else {
+			$('#jdbx_url_head_ctr'+this_el_id).css({'background-image':'url(icons/arrow-right.svg)'});
+		}
+		
 		$('#jdbx_url_content'+this_el_id).slideToggle('show');
 	});
 	

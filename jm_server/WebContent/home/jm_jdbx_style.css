@@ -254,7 +254,7 @@
 .jdbx_bao_metadata {
 	padding-top:5px;
 	padding-left:20px;
-	width: calc(100%);
+	width: calc(100% - 20px);
 }
 
 /* ----------------------------*/
