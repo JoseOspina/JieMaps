@@ -20,23 +20,25 @@ body {
 }
 	
 #top #logo {
-	width: 80px;
-	height: 30px;	
+	width: 180px;
+	height: 70px;	
 	float: left;
 }
 	
 #top #jie_query {
 	float: left;
-	margin-left: 20px;
-	margin-top: 5px;
-	width: calc(100% - 10px - 20px - 20px - 2px - 2px - 80px - 80px);
+	margin-left: 10px;
+	margin-top: 20px;
+	width: calc(100% - 10px - 10px - 20px - 2px - 2px - 180px - 80px);
+	height:25px;
 }
 
 #top #search_btn {
 	float: left;
-	margin-top: 5px;
+	margin-top: 20px;
 	margin-right: 20px;
     width: 80px;
+    height:31px;
 }
 
 #bottom {
@@ -48,9 +50,9 @@ body {
 
 #map_controls {
 	width:80px;
-	height:40px;
+	height:30px;
 	position: fixed;
-	top: 50px;
+	top: 75px;
 	left: 25px;
 }
 
@@ -60,8 +62,8 @@ body {
     background-size: cover;
     float: left;
 	display: block; 
-	height: 40px; 
-	width: 40px; 
+	height: 30px; 
+	width: 30px; 
 }
 	
 #map_controls #down { 
@@ -70,26 +72,16 @@ body {
     background-size: cover;
     float: left;
 	display: block; 
-	height: 40px; 
-	width: 40px;
+	height: 30px; 
+	width: 30px;
 }
 
 #new_jie_controls {
-	height:40px;
-	width:120px;
+	height:30px;
+	width:60px;
 	position: fixed;
-	top: 50px;
-    right: 25px;
-}
-
-#new_jie_controls #show_map_data { 
-	background-image: url(icons/list-circle.svg);
-    background-repeat: no-repeat;
-    background-size: cover;
-	display: block; 
-	height: 40px; 
-	width: 40px; 
-	float: left
+	top: 75px;
+    right: 20px;
 }
 
 #new_jie_controls #new_jie_btn { 
@@ -97,9 +89,9 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
 	display: block; 
-	height: 40px; 
-	width: 40px; 
-	float: left
+	height: 30px; 
+	width: 30px; 
+	float: right
 }
 
 #new_jie_controls #save_new_jies_btn { 
@@ -107,8 +99,26 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
 	display: none; 
-	height: 40px; 
-	width: 40px; 
+	height: 30px; 
+	width: 30px; 
+	float: left
+}
+
+#show_map_controls {
+	height:30px;
+	width:30px;
+	position: fixed;
+	top: 120px;
+    right: 20px;
+}
+
+#show_map_data { 
+	background-image: url(icons/list-circle.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
+	display: block; 
+	height: 30px; 
+	width: 30px; 
 	float: left
 }
 
@@ -117,8 +127,8 @@ body {
 	max-height:70%;
 	width:35%;
 	position: fixed;
-	display:inline;
-	top: 100px;
+	display:none;
+	top: 150px;
     right: 0px;
     margin-right:20px;
 	overflow: hidden;

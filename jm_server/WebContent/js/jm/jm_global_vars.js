@@ -5,8 +5,14 @@ $(document).ready(function()  {
 	
 	WJ_GLOBAL_jie_map = new Wj_Jie_Map('map_container','map_data');
 
+	$("#jie_query").keyup(function(event){
+	    if(event.keyCode == 13){
+	        $("#search_btn").click();
+	    }
+	});
+	
 	$("#show_map_data").click(function () {
-    	$("#map_data").toggle('show');
+    	$("#map_data").slideToggle('show');
     });
 	
 	$("#map_controls #up").click(function (e) {
@@ -52,6 +58,6 @@ $(document).ready(function()  {
 		
 	});
     	
-	get_jie_data_from_server('abaft'); 
+	// get_jie_data_from_server('abaft'); 
 	
 });

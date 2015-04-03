@@ -37,10 +37,13 @@
 		</div>
 		
 		<div id="new_jie_controls">
- 			<a id="show_map_data" href="javascript:;"></a>
  			<a id="new_jie_btn" href="javascript:;"></a>
  			<a id="save_new_jies_btn" href="javascript:;"></a>
 		</div>
+		
+		<div id="show_map_controls">
+			<a id="show_map_data" href="javascript:;"></a>
+ 		</div>	
 		
 		<div id="map_data">
  		</div>
