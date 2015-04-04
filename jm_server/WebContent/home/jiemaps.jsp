@@ -24,7 +24,7 @@
   	<body oncontextmenu="return false;">
   		<div id="map_container">
   		</div>
-  		 
+  		
   		<div id="top">
   			<img id="logo" src="img/Logo.png">
 			<input type="text" id="jie_query">
