@@ -39,7 +39,7 @@ function Wj_Jie_Map(canvas_name,jie_data_box) {
 	this.bao_color_darkness = 0.3;
 	
 	// JieDataBox Style
-	this.jd_opacity = 0.8;
+	this.jd_opacity = 0.7;
 	
 	// Jie Map components
 	this.jie_list = null; // store a complete jie list with all the jies currently in the map

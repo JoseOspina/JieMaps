@@ -24,7 +24,7 @@ public class DbHandle {
 			System.out.println(ex);
 		};
 		
-		this.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/jm_db","jaof","iristrata");
+		this.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/jm_db","jaof","iris");
 		
 	}
 	
