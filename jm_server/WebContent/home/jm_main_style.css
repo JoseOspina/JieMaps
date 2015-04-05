@@ -21,7 +21,7 @@ body {
 	
 #top #logo {
 	width: 180px;
-	height: 70px;	
+	height:auto;
 	float: left;
 }
 	

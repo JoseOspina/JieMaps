@@ -9,10 +9,8 @@ import jm_loc.beans.*;
 
 public class DbHandle {
 	public Connection con;
-	public Random random_engine;
 		
 	public DbHandle() throws SQLException {
-		 this.random_engine = new Random(2222);
 		 this.connect();
 	}
 	

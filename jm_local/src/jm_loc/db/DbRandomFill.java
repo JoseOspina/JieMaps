@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.*;
-import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,9 +12,11 @@ import java.util.*;
 
 public class DbRandomFill extends DbHandle {
 
+	public Random random_engine;
+		
 	public DbRandomFill() throws SQLException {
 		super();
-		// TODO Auto-generated constructor stub
+		this.random_engine = new Random(2222);		 
 	}
 
 	public void random_init() throws SQLException, IOException {
